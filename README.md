@@ -26,6 +26,7 @@ skill-creator/
 ├── SKILL.md                        # A skill em si
 ├── wizard.html                     # Wizard visual (offline, no navegador)
 ├── install.sh                      # Instalador multi-plataforma
+├── CHANGELOG.md                    # Histórico de versões
 ├── evals/
 │   └── evals.json                  # 10 casos de teste
 └── references/
@@ -39,14 +40,8 @@ skill-creator/
 
 ### Opção 1: One-liner (recomendado)
 
-> ⚠️ **Substitua `SEU-USUARIO` pelo seu usuário GitHub antes de executar.**
-
 ```bash
-curl -fsSL https://raw.githubusercontent.com/SEU-USUARIO/skill-creator/main/install.sh | bash
-```
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/seu-repo/skill-creator/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/ferreiratechnology2025-max/skill-creator/main/install.sh | bash
 ```
 
 O script detecta automaticamente:
@@ -57,27 +52,15 @@ O script detecta automaticamente:
 
 ### Opção 2: Manual
 
-> ⚠️ **Substitua `SEU-USUARIO` pelo seu usuário GitHub antes de executar.**
-
 ```bash
-git clone https://github.com/SEU-USUARIO/skill-creator.git
-cd skill-creator
-bash install.sh
-```
-
-```bash
-git clone https://github.com/seu-repo/skill-creator.git
+git clone https://github.com/ferreiratechnology2025-max/skill-creator.git
 cd skill-creator
 bash install.sh
 ```
 
 ### Opção 3: Wizard Visual (sem terminal)
 
-```bash
-open wizard.html
-```
-
-Funciona 100% offline. Navegue pelos 4 passos, preencha os campos e baixe os arquivos prontos.
+Abra `wizard.html` no navegador. Funciona 100% offline — navegue pelos 4 passos, preencha os campos e baixe os arquivos prontos.
 
 ---
 
@@ -98,7 +81,7 @@ Ou descreva diretamente:
 ### No Wizard Visual
 
 1. Abra `wizard.html` no navegador
-2. Escolha um template da biblioteca (24 exemplos) ou comece do zero
+2. Escolha um template da biblioteca (6 exemplos) ou comece do zero
 3. Preencha: input, processo, output, gatilhos, edge cases
 4. Gere SKILL.md + evals.json
 5. Baixe os arquivos ou copie para a pasta de skills
@@ -151,6 +134,7 @@ Toda skill gerada é validada automaticamente:
 
 - [`references/skill-anatomy.md`](references/skill-anatomy.md) — Template completo de SKILL.md
 - [`references/guia-refinamento.md`](references/guia-refinamento.md) — Como melhorar skills após deploy
+- [`CHANGELOG.md`](CHANGELOG.md) — Histórico de versões
 
 ---
 
@@ -196,4 +180,4 @@ MIT — Livre para usar, modificar e distribuir.
 
 ---
 
-**Feito por Romel Ferreira** | Transição de Construtor → Arquiteto
+**Feito por [Romel Ferreira](https://github.com/ferreiratechnology2025-max)** | Transição de Construtor → Arquiteto
