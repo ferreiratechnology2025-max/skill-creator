@@ -1,0 +1,52 @@
+[
+  {
+    "name": "busca_completa_saopaulo",
+    "input": "/leadflow buscar agências de marketing em São Paulo",
+    "expected_output": "Pipeline executa workflows 01-03: 40-60 leads encontrados, 60-85% enriquecidos, 40-60% qualificados. Arquivos CSV gerados em data/."
+  },
+  {
+    "name": "envio_outreach_limitado",
+    "input": "/leadflow enviar --limite 20 --personalizado",
+    "expected_output": "20 e-mails enviados com retry e backoff. Taxa de entrega > 90%. Log salvo. Nenhum envio acima do limite."
+  },
+  {
+    "name": "relatorio_performance",
+    "input": "/leadflow relatorio --semana-atual",
+    "expected_output": "Relatório estruturado com métricas: leads gerados, enriquecimento, qualificados, enviados, taxas de entrega/resposta. Sugestão de otimização incluída."
+  },
+  {
+    "name": "api_maps_indisponivel",
+    "input": "Google Maps API retorna 500/timeout durante busca",
+    "expected_output": "Retry automático: 60s, 120s, 240s. Se persistir, pausar pipeline, alertar usuário com timestamp, salvar estado para continuação."
+  },
+  {
+    "name": "email_nao_encontrado",
+    "input": "Hunter.io não retorna e-mail para lead específico",
+    "expected_output": "Lead marcado como 'enriquecimento parcial'. Tentar Snov.io como alternativa. Se ainda falhar, manter na lista para busca manual futura."
+  },
+  {
+    "name": "bounce_rate_alto",
+    "input": "Taxa de bounce detectada > 10% durante envio",
+    "expected_output": "Pipeline pausado imediatamente. Alerta enviado ao usuário. Sugestão de re-validação de e-mails. Estado salvo para retomada."
+  },
+  {
+    "name": "lead_ja_contactado",
+    "input": "Lead presente em outreach_log dos últimos 30 dias",
+    "expected_output": "Lead pulado automaticamente. Registro no log: 'Lead X pulado (contactado em YYYY-MM-DD)'. Nenhum e-mail enviado."
+  },
+  {
+    "name": "pedido_lgpd_remocao",
+    "input": "Lead responde solicitando remoção dos dados",
+    "expected_output": "Lead removido de todas as listas (raw, enriched, qualified). Confirmação enviada em 72h. Registro em log de compliance."
+  },
+  {
+    "name": "mensagem_ia_indisponivel",
+    "input": "API de geração de mensagem (IA) retorna erro ou timeout",
+    "expected_output": "Usar template de fallback genérico mas profissional. Marcar mensagem para revisão manual. Pipeline continua sem interrupção."
+  },
+  {
+    "name": "smtp_bloqueado",
+    "input": "SMTP retorna erro de autenticação ou conexão bloqueada",
+    "expected_output": "Tentar Resend como alternativa se configurado. Se não, pausar envios, alertar usuário, salvar estado."
+  }
+]

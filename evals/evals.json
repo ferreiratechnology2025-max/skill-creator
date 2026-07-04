@@ -1,0 +1,52 @@
+[
+  {
+    "name": "modo_1_capturar_sessao",
+    "input": "Usuário executou no chat: 1) leu CSV de vendas, 2) agrupou por região, 3) calculou totais, 4) gerou gráfico. Depois digitou /criar-skill",
+    "expected_output": "Skill gerada com nome em kebab-case, workflow com 4 passos, exemplos reais de CSV, evals.json com 2+ casos, sem credenciais, 10 checks QA passando"
+  },
+  {
+    "name": "modo_2_colar_fluxo",
+    "input": "Todo dia eu: 1) acesso painel de vendas, 2) exporto relatório, 3) formato e mando por email. /criar-skill",
+    "expected_output": "Skill estruturada com input (painel de vendas), processo (3 passos), output (email formatado), gatilhos específicos, edge cases (painel fora do ar, email bounced)"
+  },
+  {
+    "name": "modo_3_ideia_vaga",
+    "input": "quero algo que me ajude a responder comentários no Instagram",
+    "expected_output": "Agente faz perguntas: tom de voz, tipo de comentário, resposta esperada, quando ativar. Depois gera skill com workflow claro, exemplos de comentários reais, edge cases (comentário tóxico, spam)"
+  },
+  {
+    "name": "qa_check_nome_invalido",
+    "input": "Criar skill com nome 'Gerar Relatório' (com espaços e maiúsculas)",
+    "expected_output": "QA detecta erro: nome deve ser kebab-case. Sugere 'gerar-relatorio'. Só prossegue após correção."
+  },
+  {
+    "name": "qa_check_credenciais",
+    "input": "Usuário inclui no fluxo: 'acesso a API com key=sk-abc123'",
+    "expected_output": "QA detecta credencial exposta. Bloqueia e instrui: 'Credenciais vão em .env, nunca no SKILL.md'. Skill só gerada após remoção."
+  },
+  {
+    "name": "skill_complexa_demais",
+    "input": "Processo com 15 passos: busca, scrape, limpeza, enriquecimento, qualificação, scoring, mensagem, envio, follow-up, análise, relatório, dashboard, notificação, backup, arquivamento",
+    "expected_output": "Agente sugere dividir em 3 skills: 1) busca-enriquecimento, 2) qualificacao-mensagem, 3) envio-analise. Explica que skills devem fazer uma coisa bem."
+  },
+  {
+    "name": "multiplataforma_claude",
+    "input": "Plataforma detectada: Claude Code. Path: ~/.claude/skills/",
+    "expected_output": "Skill instalada em ~/.claude/skills/[nome]/ com SKILL.md e evals/evals.json. Gatilhos adaptados para comandos do Claude Code."
+  },
+  {
+    "name": "multiplataforma_codex",
+    "input": "Plataforma detectada: Codex. Path: ~/.codex/skills/",
+    "expected_output": "Skill instalada em ~/.codex/skills/[nome]/ com SKILL.md e evals/evals.json. Gatilhos adaptados para contexto do Codex."
+  },
+  {
+    "name": "leadflow_referencia",
+    "input": "Criar skill para sistema de leads B2B: busca Google Maps, enriquece contatos, qualifica, gera mensagens, envia emails com retry",
+    "expected_output": "Skill completa tipo LeadFlow: 6 workflows, scripts Python, edge cases (API indisponível, email não encontrado, bounce rate), guardrails (LGPD, máximo 2 contatos), métricas de sucesso."
+  },
+  {
+    "name": "refinamento_pos_deploy",
+    "input": "Skill gerada mas ao testar: passo 3 falha quando input tem acentos",
+    "expected_output": "Agente orienta: editar SKILL.md no passo 3, adicionar tratamento de encoding/acentos, atualizar evals.json com caso de teste com acentos, versionar mudança."
+  }
+]

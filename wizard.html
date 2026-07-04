@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Skill Creator - Wizard Visual</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --surface-light: #334155;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #475569;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            padding: 2rem 0;
+            border-bottom: 2px solid var(--primary);
+            margin-bottom: 2rem;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .progress-bar {
+            display: flex;
+            justify-content: space-between;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .progress-bar::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--surface-light);
+            z-index: 0;
+            transform: translateY(-50%);
+        }
+
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--surface-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            z-index: 1;
+            transition: all 0.3s ease;
+            border: 3px solid var(--border);
+        }
+
+        .step.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            transform: scale(1.1);
+        }
+
+        .step.completed {
+            background: var(--success);
+            border-color: var(--success);
+        }
+
+        .card {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(99, 102, 241, 0.1);
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border-radius: 8px;
+            border: 2px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 1rem;
+            transition: border-color 0.2s;
+            font-family: inherit;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.5rem;
+            border-radius: 8px;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--surface-light);
+            color: var(--text);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .output-box {
+            background: var(--bg);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.875rem;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .qa-check {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            background: var(--bg);
+        }
+
+        .qa-check.pass {
+            border-left: 4px solid var(--success);
+        }
+
+        .qa-check.fail {
+            border-left: 4px solid var(--danger);
+        }
+
+        .qa-check.pending {
+            border-left: 4px solid var(--warning);
+        }
+
+        .icon {
+            font-size: 1.25rem;
+        }
+
+        .template-card {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .template-card:hover {
+            border-color: var(--primary);
+            background: var(--surface-light);
+        }
+
+        .template-card.selected {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            header h1 {
+                font-size: 1.75rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+        }
+
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .library-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .library-item {
+            background: var(--bg);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .library-item:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+
+        .tag-claude { background: #e0e7ff; color: #4338ca; }
+        .tag-codex { background: #dbeafe; color: #1e40af; }
+        .tag-opencode { background: #d1fae5; color: #065f46; }
+        .tag-all { background: #fef3c7; color: #92400e; }
+
+        .autosave-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-left: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 Skill Creator</h1>
+            <p>Wizard Visual para criar skills multi-plataforma</p>
+            <p style="font-size: 0.9rem; margin-top: 0.5rem;">
+                <span class="tag tag-all">Offline</span>
+                <span class="tag tag-claude">Claude Code</span>
+                <span class="tag tag-codex">Codex</span>
+                <span class="tag tag-opencode">OpenCode</span>
+            </p>
+        </header>
+
+        <!-- Progress Bar -->
+        <div class="progress-bar">
+            <div class="step active" id="step1">1</div>
+            <div class="step" id="step2">2</div>
+            <div class="step" id="step3">3</div>
+            <div class="step" id="step4">4</div>
+        </div>
+
+        <!-- STEP 1: Escolher modo -->
+        <div id="page1" class="fade-in">
+            <div class="card">
+                <h2>📋 Passo 1: Como você quer criar?</h2>
+                <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+                    Escolha o modo que melhor se adapta ao seu processo.
+                </p>
+
+                <div class="grid-2">
+                    <div class="card template-card" onclick="selectMode('blank')">
+                        <h3>📝 Do Zero</h3>
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">
+                            Descreva sua ideia e o wizard guia você pelas perguntas certas.
+                        </p>
+                    </div>
+
+                    <div class="card template-card" onclick="selectMode('paste')">
+                        <h3>📄 Colar Fluxo</h3>
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">
+                            Cole um processo já documentado (notion, email, papel).
+                        </p>
+                    </div>
+                </div>
+
+                <div style="margin-top: 1.5rem;">
+                    <h3 style="color: var(--text-muted); font-size: 1rem; margin-bottom: 1rem;">
+                        📚 Ou escolha um template da biblioteca:
+                    </h3>
+                    <div class="library-grid" id="library">
+                        <!-- Templates serão preenchidos via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="goToStep(2)" id="btn-step1">
+                    Próximo →
+                </button>
+            </div>
+        </div>
+
+        <!-- STEP 2: Descrever o processo -->
+        <div id="page2" class="hidden">
+            <div class="card">
+                <h2>🎯 Passo 2: Descreva o processo</h2>
+
+                <div class="form-group">
+                    <label for="skillName">Nome da Skill (kebab-case)*</label>
+                    <input type="text" id="skillName" placeholder="ex: gerar-relatorio-vendas"
+                           oninput="validateKebabCase(this)">
+                    <small style="color: var(--text-muted);">Use apenas letras minúsculas, números e hífens</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="skillDesc">Descrição (1-2 frases)*</label>
+                    <input type="text" id="skillDesc" placeholder="O que essa skill faz e quando usar?">
+                </div>
+
+                <div class="form-group">
+                    <label for="inputDesc">📝 O que entra? (Input)</label>
+                    <textarea id="inputDesc" placeholder="Ex: CSV de vendas, URL do site, texto do usuário..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="processDesc">⚙️ Quais são os passos? (Processo)</label>
+                    <textarea id="processDesc" placeholder="1. Acessar o painel&#10;2. Exportar relatório&#10;3. Formatar dados&#10;4. Enviar email..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="outputDesc">✅ O que sai? (Output)</label>
+                    <textarea id="outputDesc" placeholder="Ex: Relatório formatado em PDF, email enviado, planilha atualizada..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="triggerDesc">🔔 Quando ativar? (Gatilhos)</label>
+                    <textarea id="triggerDesc" placeholder="Ex: Quando usuário pedir 'gerar relatório', 'relatório semanal', 'vendas do mês'..."></textarea>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="goToStep(1)">← Voltar</button>
+                <button class="btn btn-primary" onclick="goToStep(3)">Próximo →</button>
+            </div>
+        </div>
+
+        <!-- STEP 3: Edge Cases e Exemplos -->
+        <div id="page3" class="hidden">
+            <div class="card">
+                <h2>🛡️ Passo 3: O que pode dar errado?</h2>
+
+                <div class="form-group">
+                    <label for="edgeCases">Edge Cases (cenários excepcionais)</label>
+                    <textarea id="edgeCases" placeholder="Ex:&#10;- API fora do ar: retry com backoff&#10;- Arquivo vazio: retornar mensagem informativa&#10;- Dados inválidos: validar antes de processar"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="exampleInput">📥 Exemplo de Entrada</label>
+                    <textarea id="exampleInput" placeholder="Cole aqui um exemplo real do que o usuário forneceria"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="exampleOutput">📤 Exemplo de Saída Esperada</label>
+                    <textarea id="exampleOutput" placeholder="Cole aqui o resultado esperado para o exemplo acima"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="prereqs">📋 Pré-requisitos</label>
+                    <textarea id="prereqs" placeholder="Ex: Python 3.10+, chave API do Google Maps, pasta data/ criada..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="successMetric">📊 Métrica de Sucesso Principal (opcional)</label>
+                    <input type="text" id="successMetric" placeholder="Ex: Relatório gerado em < 30s, Taxa de entrega > 90%">
+                </div>
+
+                <div class="form-group">
+                    <label for="platform">🎯 Plataforma Principal</label>
+                    <select id="platform">
+                        <option value="all">Multi-plataforma (Claude + Codex + OpenCode)</option>
+                        <option value="claude">Claude Code</option>
+                        <option value="codex">Codex (OpenAI)</option>
+                        <option value="opencode">OpenCode</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="goToStep(2)">← Voltar</button>
+                <button class="btn btn-primary" onclick="generateSkill()">✨ Gerar Skill</button>
+            </div>
+        </div>
+
+        <!-- STEP 4: Resultado e QA -->
+        <div id="page4" class="hidden">
+            <div class="card">
+                <h2>✅ Passo 4: Skill Gerada + QA</h2>
+
+                <div id="qaResults" style="margin-bottom: 1.5rem;">
+                    <!-- QA checks serão preenchidos via JS -->
+                </div>
+
+                <h3 style="color: var(--primary); margin: 1.5rem 0 1rem;">SKILL.md</h3>
+                <div class="output-box" id="skillOutput"></div>
+                <button class="btn btn-success download-btn" onclick="downloadSkillMd()">
+                    📥 Baixar SKILL.md
+                </button>
+
+                <h3 style="color: var(--primary); margin: 1.5rem 0 1rem;">evals.json</h3>
+                <div class="output-box" id="evalsOutput"></div>
+                <button class="btn btn-success download-btn" onclick="downloadEvalsJson()">
+                    📥 Baixar evals.json
+                </button>
+            </div>
+
+            <div class="card" style="margin-top: 1.5rem;">
+                <h3>📖 Instruções de Instalação</h3>
+                <div class="output-box" id="installInstructions"></div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="goToStep(3)">← Voltar</button>
+                <button class="btn btn-primary" onclick="resetWizard()">🔄 Criar Nova Skill</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ───────────────────────────────────────────────────────────
+        // TEMPLATES DA BIBLIOTECA
+        // ───────────────────────────────────────────────────────────
+        const templates = [
+            {
+                name: "leadflow-brasil",
+                title: "🎯 LeadFlow Brasil",
+                desc: "Geração e outreach de leads B2B",
+                tags: ["all"],
+                data: {
+                    name: "leadflow-brasil",
+                    desc: "Sistema agentic de geração e outreach de leads B2B no Brasil",
+                    input: "Segmento de mercado e cidade (ex: 'agências de marketing em São Paulo')",
+                    process: "1. Buscar empresas no Google Maps\n2. Enriquecer contatos (email, LinkedIn)\n3. Qualificar com scoring\n4. Gerar mensagens personalizadas\n5. Enviar emails com retry e backoff",
+                    output: "Leads qualificados com mensagens personalizadas enviadas. Métricas de entrega e resposta.",
+                    triggers: "Gerar leads para [segmento] em [cidade]\nExecutar workflow de busca\nEnviar emails para leads qualificados",
+                    edges: "API Google Maps indisponível: retry com backoff (2s, 4s, 8s, máx 3 tentativas)\nEmail não encontrado para lead: marcar como 'enriquecimento parcial', tentar alternativa\nTaxa de bounce > 10%: pausar envios imediatamente, alertar usuário\nLead já contactado nos últimos 30 dias: pular automaticamente",
+                    exampleIn: "/leadflow buscar agências de marketing em São Paulo",
+                    exampleOut: "✅ 47 leads encontrados\n✅ 38 emails enriquecidos\n✅ 22 leads qualificados (score > 70)\n📁 Arquivos salvos em data/",
+                    prereqs: "Python 3.10+, Google Maps API Key, Hunter.io API Key, SMTP ou Resend, pasta data/",
+                    successMetric: "30+ leads qualificados/dia, taxa de entrega > 90%"
+                }
+            },
+            {
+                name: "gerar-relatorio-vendas",
+                title: "📊 Relatório de Vendas",
+                desc: "Gera relatório semanal a partir de CSV",
+                tags: ["all"],
+                data: {
+                    name: "gerar-relatorio-vendas-semanal",
+                    desc: "Gera relatório de vendas por região a partir de CSV semanal",
+                    input: "Arquivo CSV de vendas com colunas: data, região, valor, vendedor",
+                    process: "1. Ler CSV e validar colunas obrigatórias\n2. Agrupar registros por coluna 'região'\n3. Calcular totais, médias e ranking por região\n4. Gerar gráfico de tendência com matplotlib\n5. Exportar PDF em landscape e enviar por email",
+                    output: "Relatório PDF com gráficos + email enviado para stakeholders",
+                    triggers: "Gerar relatório de vendas\nRelatório semanal\nVendas por região\nExportar dados de vendas",
+                    edges: "CSV vazio ou com apenas header: retornar 'Sem dados para o período', não gerar PDF\nColuna 'região' ausente: perguntar usuário qual coluna usar\nValores negativos: alertar e pedir confirmação antes de incluir no total\nEncoding incorreto (acentos): forçar UTF-8 na leitura do arquivo",
+                    exampleIn: "relatorio-vendas-semana-24.csv",
+                    exampleOut: "📊 Relatório Gerado\n• Norte: R$ 45.000 (12 pedidos)\n• Sul: R$ 38.000 (8 pedidos)\n• Total: R$ 83.000\n📧 Email enviado para 5 stakeholders",
+                    prereqs: "Python 3.10+, pandas, matplotlib, smtplib ou Resend, conta de email configurada",
+                    successMetric: "Relatório gerado em < 30s, formato consistente toda semana"
+                }
+            },
+            {
+                name: "analisar-concorrentes",
+                title: "🔍 Análise de Concorrentes",
+                desc: "Compara preços e features de concorrentes",
+                tags: ["all"],
+                data: {
+                    name: "analisar-concorrentes",
+                    desc: "Pesquisa preços e features de concorrentes e gera tabela comparativa",
+                    input: "Lista de URLs de concorrentes ou nomes de produtos",
+                    process: "1. Acessar sites dos concorrentes\n2. Extrair preços e features principais\n3. Comparar com produto base\n4. Gerar tabela comparativa em Markdown\n5. Identificar oportunidades de diferenciação",
+                    output: "Tabela comparativa em Markdown + insights estratégicos",
+                    triggers: "Analisar concorrentes de [produto]\nComparar preços\nBenchmark de mercado",
+                    edges: "Site bloqueado por bot detection: usar cache ou alternativa manual\nPreço não encontrado: marcar como 'N/A' e continuar com os demais\nMudança de layout no site: atualizar seletores CSS e registrar",
+                    exampleIn: "Analisar concorrentes de CRM: salesforce.com, hubspot.com, pipedrive.com",
+                    exampleOut: "| Feature | Nosso | Salesforce | HubSpot | Pipedrive |\n|---------|-------|----------|---------|-----------|\n| Preço   | $29   | $75      | $45     | $15       |\n| API     | ✅    | ✅       | ✅      | ⚠️        |",
+                    prereqs: "Python 3.10+, requests, beautifulsoup4, pandas",
+                    successMetric: "Análise completa de 3-5 concorrentes em < 5 minutos"
+                }
+            },
+            {
+                name: "responder-comentarios",
+                title: "💬 Responder Comentários",
+                desc: "Responde comentários no Instagram/LinkedIn",
+                tags: ["all"],
+                data: {
+                    name: "responder-comentarios",
+                    desc: "Gera respostas personalizadas para comentários em redes sociais no tom de voz da marca",
+                    input: "Texto do comentário do usuário + contexto da postagem",
+                    process: "1. Analisar sentimento do comentário (positivo, neutro, negativo)\n2. Identificar intenção: dúvida, elogio, reclamação, spam\n3. Gerar resposta no tom de voz da marca\n4. Incluir CTA quando apropriado\n5. Revisar para evitar respostas genéricas ou robóticas",
+                    output: "Resposta personalizada pronta para publicar",
+                    triggers: "Responder comentários do Instagram\nGerar resposta para [comentário]\nResponder no tom da marca",
+                    edges: "Comentário tóxico/ofensivo: escalar para humano, não responder automaticamente\nSpam ou promoção: marcar e ignorar\nDúvida técnica complexa: gerar resposta inicial + sugerir contato direto com time",
+                    exampleIn: "Comentário: 'Quanto custa para implementar na minha empresa?'",
+                    exampleOut: "Oi! 😊 O investimento varia conforme o tamanho da sua operação. Nosso time comercial pode montar uma proposta personalizada. Posso te conectar? Manda um DM!",
+                    prereqs: "Acesso à API da rede social, guia de tom de voz da marca documentado",
+                    successMetric: "Resposta gerada em < 10s, tom consistente com a marca"
+                }
+            },
+            {
+                name: "gerar-post-linkedin",
+                title: "📝 Posts LinkedIn",
+                desc: "Gera posts a partir de vídeos ou textos",
+                tags: ["all"],
+                data: {
+                    name: "gerar-post-linkedin",
+                    desc: "Transforma vídeos ou textos em posts engajadores para LinkedIn",
+                    input: "URL do vídeo ou texto base + tom desejado (educativo, inspiracional, provocativo)",
+                    process: "1. Transcrever ou analisar conteúdo base\n2. Extrair 3-5 insights principais\n3. Estruturar hook + corpo + CTA\n4. Gerar 3 variações de tom\n5. Sugerir hashtags e melhor horário de publicação",
+                    output: "3 variações de post + hashtags + sugestão de horário",
+                    triggers: "Gerar post do LinkedIn\nCriar conteúdo a partir de [vídeo/texto]\nPost sobre [tema]",
+                    edges: "Vídeo sem áudio/transcrição disponível: pedir texto manualmente ao usuário\nTema sensível ou polêmico: revisar para compliance antes de publicar\nPost muito longo (>3000 chars): sugerir formato carrossel",
+                    exampleIn: "Vídeo: 'Como escalar vendas B2B' (15 min)",
+                    exampleOut: "🚀 3 lições de quem escala vendas B2B de 0 a 1M ARR\n\n1. Processo antes de pessoas...\n2. Métricas que importam...\n3. O erro que todo mundo comete...\n\nQual dessas você já cometeu? 👇\n\n#VendasB2B #ScaleUp #SaaS",
+                    prereqs: "Acesso a API de transcrição (Whisper), conta LinkedIn ativa",
+                    successMetric: "3 variações geradas em < 60s, engajamento estimado > 3%"
+                }
+            },
+            {
+                name: "emitir-nota-fiscal",
+                title: "📄 Emissão de NF",
+                desc: "Automatiza emissão de notas fiscais",
+                tags: ["all"],
+                data: {
+                    name: "emitir-nota-fiscal",
+                    desc: "Automatiza emissão de notas fiscais a partir de dados de vendas",
+                    input: "Dados da venda: cliente, valor, descrição do serviço, alíquotas",
+                    process: "1. Validar dados obrigatórios (CNPJ, valor, descrição)\n2. Calcular impostos (ISS, ICMS, PIS, COFINS) conforme regime\n3. Gerar XML da NF-e com assinatura digital\n4. Enviar para Sefaz e aguardar autorização\n5. Retornar número de protocolo, chave de acesso e PDF",
+                    output: "NF-e emitida (XML + PDF) + protocolo de autorização da Sefaz",
+                    triggers: "Emitir nota fiscal\nGerar NF para [cliente]\nFaturar pedido [número]",
+                    edges: "Cliente sem cadastro completo: pausar e solicitar dados faltantes\nSefaz fora do ar ou indisponível: agendar retry em 30 min, notificar usuário\nAlíquota diferente do padrão: confirmar com usuário antes de prosseguir\nCertificado digital expirado: alertar imediatamente e interromper",
+                    exampleIn: "Cliente: ACME Ltda, Valor: R$ 5.000, Serviço: Consultoria em TI",
+                    exampleOut: "✅ NF-e 1234 emitida\n📄 PDF gerado\n🔢 Protocolo: 123456789012345\n💰 Impostos: ISS 5% = R$ 250, PIS/COFINS = R$ 165",
+                    prereqs: "Certificado digital A1 válido, acesso Sefaz, biblioteca de emissão (pytrustnfe ou similar)",
+                    successMetric: "NF emitida em < 2 min, 100% de conformidade fiscal"
+                }
+            }
+        ];
+
+        // ───────────────────────────────────────────────────────────
+        // ESTADO
+        // ───────────────────────────────────────────────────────────
+        let currentMode = 'blank';
+        let currentStep = 1;
+        let selectedTemplate = null;
+
+        const STORAGE_KEY = 'skillCreator_state';
+        const FORM_FIELDS = [
+            'skillName', 'skillDesc', 'inputDesc', 'processDesc',
+            'outputDesc', 'triggerDesc', 'edgeCases', 'exampleInput',
+            'exampleOutput', 'prereqs', 'platform', 'successMetric'
+        ];
+
+        // ───────────────────────────────────────────────────────────
+        // INICIALIZAÇÃO
+        // ───────────────────────────────────────────────────────────
+        function init() {
+            renderLibrary();
+            loadFormState();
+            attachAutoSave();
+        }
+
+        function renderLibrary() {
+            const library = document.getElementById('library');
+            library.innerHTML = templates.map(t => `
+                <div class="library-item" onclick="selectTemplate('${t.name}')">
+                    <h4>${t.title}</h4>
+                    <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.5rem;">
+                        ${t.desc}
+                    </p>
+                    <div style="margin-top: 0.75rem;">
+                        ${t.tags.map(tag => `<span class="tag tag-${tag}">${tag === 'all' ? 'Multi' : tag}</span>`).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ───────────────────────────────────────────────────────────
+        // LOCALSTORAGE — PERSISTÊNCIA
+        // ───────────────────────────────────────────────────────────
+        function saveFormState() {
+            const state = {};
+            FORM_FIELDS.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) state[id] = el.value;
+            });
+            state.currentStep = currentStep;
+            state.currentMode = currentMode;
+            state.selectedTemplate = selectedTemplate ? selectedTemplate.name : null;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        }
+
+        function loadFormState() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (!raw) return;
+                const state = JSON.parse(raw);
+
+                // Restaura campos
+                FORM_FIELDS.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el && state[id] !== undefined) {
+                        el.value = state[id];
+                    }
+                });
+
+                // Restaura template selecionado
+                if (state.selectedTemplate) {
+                    const t = templates.find(x => x.name === state.selectedTemplate);
+                    if (t) selectedTemplate = t;
+                }
+
+                // Restaura modo
+                if (state.currentMode) currentMode = state.currentMode;
+
+            } catch (e) {
+                console.warn('Falha ao restaurar estado:', e);
+            }
+        }
+
+        function clearFormState() {
+            localStorage.removeItem(STORAGE_KEY);
+        }
+
+        function attachAutoSave() {
+            FORM_FIELDS.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('input', debounce(saveFormState, 500));
+                    el.addEventListener('change', saveFormState);
+                }
+            });
+        }
+
+        function debounce(fn, ms) {
+            let t;
+            return (...args) => {
+                clearTimeout(t);
+                t = setTimeout(() => fn(...args), ms);
+            };
+        }
+
+        // ───────────────────────────────────────────────────────────
+        // NAVEGAÇÃO
+        // ───────────────────────────────────────────────────────────
+        function goToStep(step) {
+            // Validação antes de avançar
+            if (step > currentStep && !validateCurrentStep()) {
+                return;
+            }
+
+            // Esconde página atual
+            document.getElementById(`page${currentStep}`).classList.add('hidden');
+            document.getElementById(`step${currentStep}`).classList.remove('active');
+
+            if (step > currentStep) {
+                document.getElementById(`step${currentStep}`).classList.add('completed');
+            }
+
+            // Mostra nova página
+            currentStep = step;
+            document.getElementById(`page${step}`).classList.remove('hidden');
+            document.getElementById(`page${step}`).classList.add('fade-in');
+            document.getElementById(`step${step}`).classList.add('active');
+
+            // Remove completed da página atual se voltou
+            if (step < 4) {
+                document.getElementById(`step${step}`).classList.remove('completed');
+            }
+
+            saveFormState();
+        }
+
+        function validateCurrentStep() {
+            if (currentStep === 2) {
+                const name = document.getElementById('skillName').value.trim();
+                const desc = document.getElementById('skillDesc').value.trim();
+                if (!name || !desc) {
+                    alert('Preencha o nome e a descrição da skill.');
+                    return false;
+                }
+                if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(name)) {
+                    alert('Nome deve ser kebab-case (ex: minha-skill). Use apenas letras minúsculas, números e hífens.');
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function validateKebabCase(input) {
+            const value = input.value;
+            const clean = value.toLowerCase().replace(/[^a-z0-9-]/g, '').replace(/--+/g, '-');
+            input.value = clean;
+            saveFormState();
+        }
+
+        // ───────────────────────────────────────────────────────────
+        // SELEÇÃO DE MODO E TEMPLATE
+        // ───────────────────────────────────────────────────────────
+        function selectMode(mode) {
+            currentMode = mode;
+            document.querySelectorAll('.template-card').forEach(c => c.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+            saveFormState();
+        }
+
+        function selectTemplate(name) {
+            selectedTemplate = templates.find(t => t.name === name);
+            if (selectedTemplate) {
+                fillForm(selectedTemplate.data);
+                document.querySelectorAll('.library-item').forEach(i => i.style.borderColor = '');
+                event.currentTarget.style.borderColor = 'var(--primary)';
+                saveFormState();
+            }
+        }
+
+        function fillForm(data) {
+            document.getElementById('skillName').value = data.name || '';
+            document.getElementById('skillDesc').value = data.desc || '';
+            document.getElementById('inputDesc').value = data.input || '';
+            document.getElementById('processDesc').value = data.process || '';
+            document.getElementById('outputDesc').value = data.output || '';
+            document.getElementById('triggerDesc').value = data.triggers || '';
+            document.getElementById('edgeCases').value = data.edges || '';
+            document.getElementById('exampleInput').value = data.exampleIn || '';
+            document.getElementById('exampleOutput').value = data.exampleOut || '';
+            document.getElementById('prereqs').value = data.prereqs || '';
+            document.getElementById('successMetric').value = data.successMetric || '';
+        }
+
+        // ───────────────────────────────────────────────────────────
+        // GERAÇÃO DA SKILL
+        // ───────────────────────────────────────────────────────────
+        function generateSkill() {
+            if (!validateCurrentStep()) return;
+
+            const data = {
+                name: document.getElementById('skillName').value.trim(),
+                desc: document.getElementById('skillDesc').value.trim(),
+                input: document.getElementById('inputDesc').value.trim(),
+                process: document.getElementById('processDesc').value.trim(),
+                output: document.getElementById('outputDesc').value.trim(),
+                triggers: document.getElementById('triggerDesc').value.trim(),
+                edges: document.getElementById('edgeCases').value.trim(),
+                exampleIn: document.getElementById('exampleInput').value.trim(),
+                exampleOut: document.getElementById('exampleOutput').value.trim(),
+                prereqs: document.getElementById('prereqs').value.trim(),
+                successMetric: document.getElementById('successMetric').value.trim(),
+                platform: document.getElementById('platform').value
+            };
+
+            // Gera SKILL.md
+            const skillMd = generateSkillMd(data);
+            document.getElementById('skillOutput').textContent = skillMd;
+            window.generatedSkillMd = skillMd;
+
+            // Gera evals.json
+            const evalsJson = generateEvalsJson(data);
+            document.getElementById('evalsOutput').textContent = evalsJson;
+            window.generatedEvalsJson = evalsJson;
+
+            // QA Checks
+            runQA(data);
+
+            // Instruções de instalação
+            generateInstallInstructions(data);
+
+            goToStep(4);
+        }
+
+        function generateSkillMd(data) {
+            const today = new Date().toISOString().split('T')[0];
+            const platformNote = data.platform === 'all'
+                ? `## Multi-Plataforma
+Esta skill funciona em:
+- **Claude Code**: \`~/.claude/skills/${data.name}/\`
+- **Codex (OpenAI)**: \`~/.codex/skills/${data.name}/\`
+- **OpenCode**: \`~/.config/opencode/skills/${data.name}/\`
+
+Scripts e automações são executados via shell do agente.`
+                : `## Plataforma
+Otimizada para: **${data.platform}**
+\nInstale em: \`~/.${data.platform}/skills/${data.name}/\``;
+
+            const metricsSection = data.successMetric
+                ? `## Métricas de Sucesso\n\n| Métrica | Meta |\n|---------|------|\n| ${data.successMetric} | ✅ |\n`
+                : '';
+
+            const triggersList = data.triggers
+                .split('\n')
+                .map(t => '- "' + t.trim().replace(/^["']|["']$/g, '') + '"')
+                .filter(t => t.length > 3)
+                .join('\n');
+
+            const workflowSteps = data.process
+                .split('\n')
+                .map((p, i) => {
+                    const clean = p.trim().replace(/^\d+[\.\)]\s*/, '');
+                    return clean ? `${i + 1}. ${clean}` : '';
+                })
+                .filter(Boolean)
+                .join('\n');
+
+            const prereqsList = data.prereqs
+                .split('\n')
+                .map(p => '- ' + p.trim().replace(/^[-•]\s*/, ''))
+                .filter(p => p.length > 2)
+                .join('\n');
+
+            const edgesList = data.edges
+                .split('\n')
+                .map(e => {
+                    const clean = e.trim().replace(/^[-•]\s*/, '');
+                    if (!clean) return '';
+                    const [title, ...rest] = clean.split(':');
+                    if (rest.length > 0) {
+                        return `- **${title.trim()}**: ${rest.join(':').trim()}`;
+                    }
+                    return '- ' + clean;
+                })
+                .filter(Boolean)
+                .join('\n');
+
+            return `---
+name: ${data.name}
+description: ${data.desc}
+---
+
+# skill-${data.name}
+
+## Descrição
+${data.desc}
+
+## Gatilhos
+Ative quando o usuário pedir:
+${triggersList || '- "' + data.name.replace(/-/g, ' ') + '"'}
+
+## Pré-requisitos
+${prereqsList || '- Nenhum pré-requisito específico'}
+
+${platformNote}
+
+## Workflow
+${workflowSteps || '1. Executar processo principal'}
+
+## Exemplos
+
+### Entrada
+\`\`\`
+${data.exampleIn || 'Descreva o input esperado'}
+\`\`\`
+
+### Saída esperada
+\`\`\`
+${data.exampleOut || 'Descreva o output esperado'}
+\`\`\`
+
+## Edge Cases
+${edgesList || '- Nenhum edge case documentado'}
+
+## Regras Invioláveis
+1. **NUNCA expor credenciais**: Tokens, senhas e chaves API ficam em \`.env\`, nunca no SKILL.md
+2. **SEMPRE validar input**: Verificar formato, presença de dados obrigatórios antes de processar
+3. **SEMPRE documentar erros**: Retornar mensagens informativas ao invés de falhar silenciosamente
+4. **NUNCA executar ações irreversíveis sem confirmação**: Excluir dados, enviar emails em massa, emitir notas fiscais
+5. **SEMPRE respeitar limites**: Não exceder quotas de API, não spammar, não sobrecarregar serviços
+
+${metricsSection}
+## Refinamento Pós-Deploy
+
+1. **Testar com input real**: Execute a skill com dados reais do seu dia a dia
+2. **Identificar falhas**: Anote onde o agente errou, ficou confuso ou ignorou instruções
+3. **Corrigir SKILL.md**: Ajuste passos, adicione exemplos, refine gatilhos
+4. **Atualizar evals.json**: Adicione casos de teste baseados nas falhas encontradas
+5. **Versionar mudanças**: Registre no changelog abaixo
+
+## Changelog
+
+### ${today} — v1.0
+- Deploy inicial
+- Workflow definido com ${workflowSteps.split('\n').length} passos
+- ${edgesList ? data.edges.split('\n').filter(Boolean).length + ' edge cases' : 'Edge cases iniciais'} documentados
+
+---
+
+**Gerado com Skill Creator** | Transição de Construtor → Arquiteto
+`;
+        }
+
+        function generateEvalsJson(data) {
+            const edgesArray = data.edges
+                .split('\n')
+                .map(e => e.trim().replace(/^[-•]\s*/, ''))
+                .filter(Boolean);
+
+            const evals = [
+                {
+                    name: "caso_feliz",
+                    input: data.exampleIn || `Executar skill ${data.name} com input padrão`,
+                    expected_output: data.exampleOut
+                        ? `Skill executa workflow completo. Resultado esperado inclui: ${data.exampleOut.substring(0, 120)}...`
+                        : "Skill executa todos os passos do workflow sem erros e retorna output no formato documentado"
+                }
+            ];
+
+            if (edgesArray.length >= 1) {
+                const firstEdge = edgesArray[0];
+                const [title, ...rest] = firstEdge.split(':');
+                evals.push({
+                    name: "edge_case_" + (title || 'primeiro').toLowerCase().replace(/\s+/g, '_').substring(0, 20),
+                    input: firstEdge,
+                    expected_output: `Skill identifica o cenário excepcional, aplica o tratamento documentado ("${rest.join(':').trim() || 'fallback apropriado'}"), não falha silenciosamente`
+                });
+            }
+
+            if (edgesArray.length >= 2) {
+                const secondEdge = edgesArray[1];
+                const [title2, ...rest2] = secondEdge.split(':');
+                evals.push({
+                    name: "edge_case_" + (title2 || 'segundo').toLowerCase().replace(/\s+/g, '_').substring(0, 20),
+                    input: secondEdge,
+                    expected_output: `Skill aplica fallback conforme documentado em edge cases: ${rest2.join(':').trim() || 'tratamento adequado'}`
+                });
+            }
+
+            // Validação de segurança
+            evals.push({
+                name: "validacao_credenciais",
+                input: `Usuário tenta incluir no fluxo: "API_KEY=sk-abc123" ou senha no SKILL.md`,
+                expected_output: "QA detecta credencial exposta. Bloqueia geração e instrui: 'Credenciais vão em .env, nunca no SKILL.md'. Skill só gerada após remoção."
+            });
+
+            // Validação de nome
+            evals.push({
+                name: "validacao_nome_kebab",
+                input: `Criar skill com nome "Gerar Relatorio" (com espaços e maiúsculas)`,
+                expected_output: "QA detecta erro: nome deve ser kebab-case. Sugere 'gerar-relatorio'. Só prossegue após correção."
+            });
+
+            return JSON.stringify(evals, null, 2);
+        }
+
+        function runQA(data) {
+            const combinedText = (data.process || '') + ' ' + (data.exampleIn || '');
+            const hasCredentials = /(password|token|key|secret|senha|api_key)\s*[=:]\s*["']?[\w-]+/i.test(combinedText);
+            const edgesCount = data.edges.split('\n').filter(e => e.trim()).length;
+            const triggersCount = data.triggers.split('\n').filter(t => t.trim()).length;
+            const workflowSteps = data.process.split('\n').filter(p => p.trim()).length;
+
+            const checks = [
+                { name: "Nome kebab-case", pass: /^[a-z0-9]+(-[a-z0-9]+)*$/.test(data.name) },
+                { name: "Descrição preenchida (≥10 chars)", pass: data.desc.length >= 10 },
+                { name: "Gatilhos definidos (≥1)", pass: triggersCount >= 1 },
+                { name: "Workflow com ≥2 passos", pass: workflowSteps >= 2 },
+                { name: "Exemplo de entrada preenchido", pass: data.exampleIn.length > 0 },
+                { name: "Exemplo de saída preenchido", pass: data.exampleOut.length > 0 },
+                { name: "Edge cases (mín 2)", pass: edgesCount >= 2 },
+                { name: "Zero credenciais expostas", pass: !hasCredentials },
+                { name: "Pré-requisitos listados", pass: data.prereqs.length > 0 },
+                { name: "Plataforma definida", pass: data.platform !== '' }
+            ];
+
+            const passed = checks.filter(c => c.pass).length;
+            const allPass = passed === checks.length;
+
+            const qaDiv = document.getElementById('qaResults');
+            qaDiv.innerHTML = '<h3 style="margin-bottom: 1rem;">🔍 QA Automático (10 Checks)</h3>' +
+                checks.map(c => `
+                    <div class="qa-check ${c.pass ? 'pass' : 'fail'}">
+                        <span class="icon">${c.pass ? '✅' : '❌'}</span>
+                        <span>${c.name}</span>
+                    </div>
+                `).join('');
+
+            qaDiv.innerHTML += `<p style="margin-top: 1rem; text-align: center; font-weight: bold; color: ${allPass ? 'var(--success)' : 'var(--warning)'};">
+                ${passed}/10 checks passando ${allPass ? '✅ Pronto para deploy!' : '⚠️ Corrija os itens em vermelho'}
+            </p>`;
+        }
+
+        function generateInstallInstructions(data) {
+            const platform = data.platform;
+            let instructions = '';
+
+            if (platform === 'all' || platform === 'claude') {
+                instructions += `## Claude Code
+\`\`\`bash
+mkdir -p ~/.claude/skills/${data.name}
+cp SKILL.md ~/.claude/skills/${data.name}/
+mkdir -p ~/.claude/skills/${data.name}/evals
+cp evals.json ~/.claude/skills/${data.name}/evals/
+\`\`\`\n\n`;
+            }
+            if (platform === 'all' || platform === 'codex') {
+                instructions += `## Codex (OpenAI)
+\`\`\`bash
+mkdir -p ~/.codex/skills/${data.name}
+cp SKILL.md ~/.codex/skills/${data.name}/
+mkdir -p ~/.codex/skills/${data.name}/evals
+cp evals.json ~/.codex/skills/${data.name}/evals/
+\`\`\`\n\n`;
+            }
+            if (platform === 'all' || platform === 'opencode') {
+                instructions += `## OpenCode
+\`\`\`bash
+mkdir -p ~/.config/opencode/skills/${data.name}
+cp SKILL.md ~/.config/opencode/skills/${data.name}/
+mkdir -p ~/.config/opencode/skills/${data.name}/evals
+cp evals.json ~/.config/opencode/skills/${data.name}/evals/
+\`\`\`\n\n`;
+            }
+
+            instructions += `## Como Usar\n1. Abra seu agente (Claude Code, Codex ou OpenCode)\n2. Digite um gatilho: ${data.triggers.split('\n')[0] || data.name}\n3. Ou mencione: "Use a skill ${data.name}"\n\n## Testar\nVerifique os casos de teste em evals.json para validar a skill antes de usar em produção.`;
+
+            document.getElementById('installInstructions').textContent = instructions;
+        }
+
+        // ───────────────────────────────────────────────────────────
+        // DOWNLOADS
+        // ───────────────────────────────────────────────────────────
+        function downloadSkillMd() {
+            const blob = new Blob([window.generatedSkillMd], { type: 'text/markdown' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'SKILL.md';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function downloadEvalsJson() {
+            const blob = new Blob([window.generatedEvalsJson], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'evals.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function resetWizard() {
+            // Limpa formulário
+            document.querySelectorAll('input, textarea').forEach(el => el.value = '');
+            document.getElementById('platform').value = 'all';
+
+            // Limpa estado persistido
+            clearFormState();
+
+            // Reseta estado
+            selectedTemplate = null;
+            currentMode = 'blank';
+
+            // Reseta steps
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById(`step${i}`).classList.remove('active', 'completed');
+                document.getElementById(`page${i}`).classList.add('hidden');
+            }
+            document.getElementById('step1').classList.add('active');
+            document.getElementById('page1').classList.remove('hidden');
+            currentStep = 1;
+
+            // Reseta seleções visuais
+            document.querySelectorAll('.template-card, .library-item').forEach(el => {
+                el.classList.remove('selected');
+                el.style.borderColor = '';
+            });
+        }
+
+        // Inicializa
+        init();
+    </script>
+</body>
+</html>
