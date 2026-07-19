@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="{{META_DESCRICAO}}">
+  <title>{{NOME_NEGOCIO}} — {{TITULO_HERO}}</title>
+  <style>
+    :root {
+      --cor-primaria: {{COR_PRIMARIA}};
+      --cor-escura: {{COR_ESCURA}};
+      --cor-fundo: #ffffff;
+      --cor-texto: #1f2937;
+      --cor-texto-suave: #6b7280;
+      --raio: 12px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      color: var(--cor-texto);
+      background: var(--cor-fundo);
+      line-height: 1.6;
+    }
+    .container { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
+    header {
+      padding: 20px 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    header .container { display: flex; justify-content: space-between; align-items: center; }
+    .logo { font-weight: 700; font-size: 1.25rem; color: var(--cor-escura); }
+    .hero {
+      padding: 88px 0 72px;
+      text-align: center;
+      background: linear-gradient(180deg, color-mix(in srgb, var(--cor-primaria) 8%, white) 0%, white 100%);
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.25rem);
+      line-height: 1.15;
+      color: var(--cor-escura);
+      max-width: 800px;
+      margin: 0 auto 20px;
+    }
+    .hero p {
+      font-size: 1.2rem;
+      color: var(--cor-texto-suave);
+      max-width: 640px;
+      margin: 0 auto 36px;
+    }
+    .cta {
+      display: inline-block;
+      background: var(--cor-primaria);
+      color: #fff;
+      font-weight: 600;
+      font-size: 1.05rem;
+      padding: 16px 36px;
+      border-radius: var(--raio);
+      text-decoration: none;
+      transition: transform .15s ease, filter .15s ease;
+    }
+    .cta:hover { transform: translateY(-2px); filter: brightness(1.08); }
+    .beneficios { padding: 72px 0; }
+    .beneficios h2 { text-align: center; font-size: 2rem; color: var(--cor-escura); margin-bottom: 44px; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+    .card {
+      padding: 28px;
+      border: 1px solid #e5e7eb;
+      border-radius: var(--raio);
+      background: #fff;
+    }
+    .card h3 { color: var(--cor-escura); margin-bottom: 8px; font-size: 1.1rem; }
+    .card p { color: var(--cor-texto-suave); font-size: .95rem; }
+    .cta-final {
+      padding: 72px 0;
+      text-align: center;
+      background: color-mix(in srgb, var(--cor-primaria) 6%, white);
+    }
+    .cta-final h2 { font-size: 1.9rem; color: var(--cor-escura); margin-bottom: 12px; }
+    .cta-final p { color: var(--cor-texto-suave); margin-bottom: 32px; }
+    footer {
+      padding: 32px 0;
+      border-top: 1px solid #e5e7eb;
+      text-align: center;
+      color: var(--cor-texto-suave);
+      font-size: .85rem;
+    }
+    footer a { color: var(--cor-texto-suave); }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="logo">{{NOME_NEGOCIO}}</div>
+      <a class="cta" style="padding:10px 22px;font-size:.95rem" href="{{LINK_CTA}}">{{CTA_TEXTO}}</a>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <h1>{{TITULO_HERO}}</h1>
+      <p>{{SUBTITULO}}</p>
+      <a class="cta" href="{{LINK_CTA}}">{{CTA_TEXTO}}</a>
+    </div>
+  </section>
+
+  <section class="beneficios">
+    <div class="container">
+      <h2>Por que escolher a {{NOME_NEGOCIO}}?</h2>
+      <div class="grid">
+        {{#BENEFICIOS}}
+        <div class="card">
+          <h3>{{titulo}}</h3>
+          <p>{{descricao}}</p>
+        </div>
+        {{/BENEFICIOS}}
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-final">
+    <div class="container">
+      <h2>{{CHAMADA_FINAL}}</h2>
+      <p>Atendemos {{CIDADE}} e região.</p>
+      <a class="cta" href="{{LINK_CTA}}">{{CTA_TEXTO}}</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>© {{ANO}} {{NOME_NEGOCIO}} — {{CIDADE}}. Todos os direitos reservados.</p>
+      <p>Esta página não coleta dados pessoais sem consentimento (LGPD).</p>
+    </div>
+  </footer>
+</body>
+</html>

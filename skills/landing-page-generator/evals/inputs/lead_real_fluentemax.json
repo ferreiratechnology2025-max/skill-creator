@@ -1,0 +1,16 @@
+{
+  "NOME_NEGOCIO": "Escola de Idiomas FluenteMax",
+  "TITULO_HERO": "Fluencia em ingles em ate 12 meses com garantia",
+  "SUBTITULO": "Metodo imersivo com foco em conversacao desde o primeiro dia em Goiania",
+  "CTA_TEXTO": "Agendar aula experimental",
+  "LINK_CTA": "https://wa.me/5562988887777?text=Quero%20aula%20experimental",
+  "CIDADE": "Goiania",
+  "COR_PRIMARIA": "#dc2626",
+  "COR_ESCURA": "#fef2f2",
+  "BENEFICIOS": [
+    {"titulo": "Metodo imersivo", "descricao": "Aulas 100% em ingles desde o nivel basico"},
+    {"titulo": "Flexibilidade de horarios", "descricao": "Aulas presenciais e online com 15 opcoes de horario"},
+    {"titulo": "Material incluso", "descricao": "Todo o material didatico digital e fisico incluso na mensalidade"},
+    {"titulo": "Preparacao para certificacoes", "descricao": "TOEFL, IELTS e Cambridge com taxa de aprovacao garantida"}
+  ]
+}

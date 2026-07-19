@@ -1,0 +1,14 @@
+{
+  "NOME_NEGOCIO": "Açaí & Cia Distribuição",
+  "TITULO_HERO": "Açaí puro direto da Amazônia para você",
+  "SUBTITULO": "Distribuição de açaí premium em blocos de 5kg",
+  "CTA_TEXTO": "Fazer pedido",
+  "LINK_CTA": "https://wa.me/5592988887777?text=Quero%20pedir",
+  "CIDADE": "Manaus",
+  "BENEFICIOS": [
+    {"titulo": "100% puro sem conservantes", "descricao": "Açaí selecionado das melhores fazendas do Pará"},
+    {"titulo": "Entrega refrigerada 24h", "descricao": "Cadeia fria garantida do campo à sua porta"},
+    {"titulo": "Pedido mínimo flexível", "descricao": "A partir de 1 bloco de 5kg para revendedores"}
+  ],
+  "SLUG": "acai-cia"
+}

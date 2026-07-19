@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Proposta comercial para {{CLIENTE}} - {{PROJETO}}">
+  <title>Proposta Comercial - {{CLIENTE}}</title>
+  <style>
+    :root {
+      --cor-primaria: #0f766e;
+      --cor-escura: #134e4a;
+      --cor-fundo: #ffffff;
+      --cor-texto: #1f2937;
+      --cor-texto-suave: #6b7280;
+      --cor-borda: #e5e7eb;
+      --raio: 8px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--cor-texto);
+      background: #f9fafb;
+      line-height: 1.6;
+    }
+    .container { max-width: 800px; margin: 0 auto; padding: 0 24px; }
+    header {
+      background: var(--cor-primaria);
+      color: #fff;
+      padding: 40px 0;
+    }
+    header .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo { font-weight: 700; font-size: 1.25rem; }
+    .data-proposta { font-size: 0.9rem; opacity: 0.8; }
+    .proposta {
+      background: #fff;
+      margin: 32px auto;
+      padding: 48px;
+      border-radius: var(--raio);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .proposta h1 {
+      font-size: 1.75rem;
+      color: var(--cor-escura);
+      margin-bottom: 8px;
+    }
+    .proposta h2 {
+      font-size: 1.25rem;
+      color: var(--cor-primaria);
+      margin: 32px 0 16px;
+    }
+    .proposta p {
+      color: var(--cor-texto-suave);
+      margin-bottom: 12px;
+    }
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .info-item {
+      padding: 16px;
+      background: #f9fafb;
+      border-radius: var(--raio);
+      border: 1px solid var(--cor-borda);
+    }
+    .info-item label {
+      display: block;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--cor-texto-suave);
+      margin-bottom: 4px;
+    }
+    .info-item span {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--cor-texto);
+    }
+    .valor-destaque {
+      background: var(--cor-primaria);
+      color: #fff;
+      padding: 24px;
+      border-radius: var(--raio);
+      text-align: center;
+      margin: 32px 0;
+    }
+    .valor-destaque label {
+      display: block;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      opacity: 0.8;
+      margin-bottom: 8px;
+    }
+    .valor-destaque span {
+      font-size: 2rem;
+      font-weight: 700;
+    }
+    .servicos-lista {
+      list-style: none;
+      padding: 0;
+    }
+    .servicos-lista li {
+      padding: 12px 16px;
+      border-left: 3px solid var(--cor-primaria);
+      margin-bottom: 8px;
+      background: #f9fafb;
+      border-radius: 0 var(--raio) var(--raio) 0;
+    }
+    .condicoes {
+      margin: 32px 0;
+      padding: 24px;
+      background: #f0fdfa;
+      border-radius: var(--raio);
+      border: 1px solid #ccfbf1;
+    }
+    .condicoes p { margin-bottom: 8px; }
+    .validade {
+      text-align: center;
+      padding: 16px;
+      color: var(--cor-texto-suave);
+      font-size: 0.9rem;
+    }
+    footer {
+      text-align: center;
+      padding: 32px 0;
+      color: var(--cor-texto-suave);
+      font-size: 0.85rem;
+    }
+    @media (max-width: 600px) {
+      .proposta { padding: 24px; }
+      .info-grid { grid-template-columns: 1fr; }
+      .valor-destaque span { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="logo">Proposta Comercial</div>
+      <div class="data-proposta">{{ANO}}</div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="proposta">
+      <h1>Proposta para {{CLIENTE}}</h1>
+      <p>Referente ao projeto: <strong>{{PROJETO}}</strong></p>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <label>Cliente</label>
+          <span>{{CLIENTE}}</span>
+        </div>
+        <div class="info-item">
+          <label>Projeto</label>
+          <span>{{PROJETO}}</span>
+        </div>
+        <div class="info-item">
+          <label>Prazo</label>
+          <span>{{PRAZO}}</span>
+        </div>
+        <div class="info-item">
+          <label>Contato</label>
+          <span>{{CONTATO}}</span>
+        </div>
+      </div>
+
+      <div class="valor-destaque">
+        <label>Investimento Total</label>
+        <span>{{VALOR}}</span>
+      </div>
+
+      <h2>Servicos Incluídos</h2>
+      <ul class="servicos-lista">
+        {{#SERVICOS}}
+        <li>{{.}}</li>
+        {{/SERVICOS}}
+      </ul>
+
+      <div class="condicoes">
+        <h2>Condições de Pagamento</h2>
+        <p><strong>{{CONDICOES_PGTO}}</strong></p>
+      </div>
+
+      <div class="validade">
+        <p>Esta proposta tem validade de <strong>{{VALIDADE_PROPOSTA}}</strong> a partir da data de emissão.</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">
+      <p>© {{ANO}} — Proposta gerada automaticamente. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,10 @@
+# Outputs de teste gerados (reproduziveis via generate.py --test-all)
+skills/*/output/
+
+# Python
+*.pyc
+__pycache__/
+
+# Ambiente
+.env
+.venv/

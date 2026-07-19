@@ -1,0 +1,11 @@
+{
+  "NOME_NEGOCIO": "Teste Poucos",
+  "TITULO_HERO": "Titulo valido para teste",
+  "SUBTITULO": "Descricao de teste",
+  "CTA_TEXTO": "Clique",
+  "LINK_CTA": "https://wa.me/5562999999999",
+  "CIDADE": "Goiania",
+  "BENEFICIOS": [
+    {"titulo": "B1", "descricao": "Desc 1"}
+  ]
+}

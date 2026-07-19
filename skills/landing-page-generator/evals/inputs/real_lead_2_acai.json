@@ -1,0 +1,16 @@
+{
+  "NOME_NEGOCIO": "Acai & Cia - Sabor Amazonico",
+  "TITULO_HERO": "O melhor acai da regiao entregue na sua casa",
+  "SUBTITULO": "Acai organico direto do Para com 15 combinacoes em Goiania",
+  "CTA_TEXTO": "Pedir agora",
+  "LINK_CTA": "https://wa.me/5562988887777?text=Quero%20pedir",
+  "CIDADE": "Goiania",
+  "COR_PRIMARIA": "#4c1d95",
+  "COR_ESCURA": "#fdf2f8",
+  "BENEFICIOS": [
+    {"titulo": "Entrega em menos de 30 min", "descricao": "Logistica propria para entrega rapida"},
+    {"titulo": "10% off na primeira compra", "descricao": "Desconto automatico no primeiro pedido"},
+    {"titulo": "Acai organico certificado", "descricao": "Certificacao de origem e qualidade"},
+    {"titulo": "Acompanhamentos ilimitados", "descricao": "Misture quantos sabores quiser"}
+  ]
+}

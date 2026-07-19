@@ -1,0 +1,16 @@
+{
+  "NOME_NEGOCIO": "Estética Bella Donna",
+  "TITULO_HERO": "Beleza e bem-estar em um só lugar",
+  "SUBTITULO": "Tratamentos faciais, corporais e depilação a laser em Curitiba",
+  "CTA_TEXTO": "Agendar consulta",
+  "LINK_CTA": "https://wa.me/5541944443333?text=Quero%20agendar",
+  "CIDADE": "Curitiba",
+  "COR_PRIMARIA": "xyz",
+  "COR_ESCURA": "#not-a-color",
+  "BENEFICIOS": [
+    {"titulo": "Depilação a laser", "descricao": "Tecnologia alemã de última geração"},
+    {"titulo": "Peeling personalizado", "descricao": "Peeling facial adaptado ao seu tipo de pele"},
+    {"titulo": "Drenagem linfática", "descricao": "Massagem especializada para retenção de líquidos"}
+  ],
+  "SLUG": "estetica-bella-donna"
+}

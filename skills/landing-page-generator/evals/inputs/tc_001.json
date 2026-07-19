@@ -1,0 +1,14 @@
+{
+  "NOME_NEGOCIO": "Clinica Dental Sorriso",
+  "TITULO_HERO": "Seu sorriso merece o melhor cuidado",
+  "SUBTITULO": "Atendimento humanizado com tecnologia de ponta",
+  "CTA_TEXTO": "Agendar avaliação",
+  "LINK_CTA": "https://wa.me/5562999999999?text=Quero%20agendar",
+  "CIDADE": "Goiânia",
+  "BENEFICIOS": [
+    {"titulo": "Equipe especializada em implantes", "descricao": "Implantodontistas com 10+ anos de experiência"},
+    {"titulo": "Tecnologia CAD/CAM", "descricao": "Próteses digitais de alta precisão"},
+    {"titulo": "Emergência 24h", "descricao": "Plantão dental para casos urgentes"}
+  ],
+  "SLUG": "clinica-dental-sorriso"
+}

@@ -1,0 +1,14 @@
+{
+  "NOME_NEGOCIO": "Pet Shop Amigo Fiel",
+  "TITULO_HERO": "Cuidamos do seu pet",
+  "SUBTITULO": "Banho, tosa e internação para cães e gatos em São Paulo",
+  "CTA_TEXTO": "Agendar banho",
+  "LINK_CTA": "https://wa.me/5511977776666?text=Quero%20agendar",
+  "CIDADE": "São Paulo",
+  "BENEFICIOS": [
+    {"titulo": "Banho hipoalergênico", "descricao": "Produtos naturais para peles sensíveis"},
+    {"titulo": "Hotel com câmeras 24h", "descricao": "Monitore seu pet a qualquer momento"},
+    {"titulo": "Veterinário especializado", "descricao": "Atendimento para pequenos animais"}
+  ],
+  "SLUG": "pet-shop-amigo-fiel"
+}

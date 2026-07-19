@@ -1,0 +1,16 @@
+{
+  "NOME_NEGOCIO": "OdontoClinic Goiania",
+  "TITULO_HERO": "Odontologia de precisao para toda familia",
+  "SUBTITULO": "Mais de 5000 sorrisos transformados com tecnologia 3D em Goiania",
+  "CTA_TEXTO": "Agendar consulta",
+  "LINK_CTA": "https://wa.me/5562999998888?text=Quero%20agendar",
+  "CIDADE": "Goiania",
+  "COR_PRIMARIA": "#1a56db",
+  "COR_ESCURA": "#f8fafc",
+  "BENEFICIOS": [
+    {"titulo": "Implantes com garantia vitalicia", "descricao": "Garantia de fabrica em todos os implantes"},
+    {"titulo": "Atendimento em menos de 15 min", "descricao": "Sem espera, sem burocracia"},
+    {"titulo": "Financiamento em ate 24x", "descricao": "Sem juros para pacientes propios"},
+    {"titulo": "Equipe com 15 anos de experiencia", "descricao": "Profissionais certificados e atualizados"}
+  ]
+}

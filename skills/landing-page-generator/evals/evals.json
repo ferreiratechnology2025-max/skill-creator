@@ -1,0 +1,138 @@
+{
+  "test_cases": [
+    {
+      "id": "tc_001",
+      "name": "Caso completo - clinica odontologica",
+      "input": {
+        "NOME_NEGOCIO": "Clinica Dental Sorriso",
+        "TITULO_HERO": "Seu sorriso merece o melhor cuidado",
+        "SUBTITULO": "Atendimento humanizado com tecnologia de ponta",
+        "CTA_TEXTO": "Agendar avaliacao",
+        "LINK_CTA": "https://wa.me/5562999999999?text=Quero%20agendar",
+        "CIDADE": "Goiania",
+        "BENEFICIOS": [
+          {"titulo": "Equipe especializada em implantes", "descricao": "Implantodontistas com 10+ anos de experiencia"},
+          {"titulo": "Tecnologia CAD/CAM", "descricao": "Proteses digitais de alta precisao"},
+          {"titulo": "Emergencia 24h", "descricao": "Plantaodental para casos urgentes"}
+        ]
+      },
+      "expected": "success",
+      "checks": ["slug_gerado", "html_gerado", "params_arquivado"]
+    },
+    {
+      "id": "tc_002",
+      "name": "Caracteres especiais e acentos - Acai & Cia",
+      "input": {
+        "NOME_NEGOCIO": "Acai & Cia Distribuicao",
+        "TITULO_HERO": "Acai puro direto da Amazonia para voce",
+        "SUBTITULO": "istribuicao de acai premium em blocos de 5kg",
+        "CTA_TEXTO": "Fazer pedido",
+        "LINK_CTA": "https://wa.me/5592988887777?text=Quero%20pedir",
+        "CIDADE": "Manaus",
+        "BENEFICIOS": [
+          {"titulo": "100% puro sem conservantes", "descricao": "Acai selecionado das melhores fazendas do Para"},
+          {"titulo": "Entrega refrigerada 24h", "descricao": "Cadeia fria garantida do campo a sua porta"},
+          {"titulo": "Pedido minimo flexivel", "descricao": "A partir de 1 bloco de 5kg para revendedores"}
+        ]
+      },
+      "expected": "success",
+      "checks": ["slug_normalizado", "html_gerado", "acentos_preservados", "params_arquivado"]
+    },
+    {
+      "id": "tc_003",
+      "name": "Titulo no limite minimo (10 caracteres)",
+      "input": {
+        "NOME_NEGOCIO": "Pet Shop Amigo Fiel",
+        "TITULO_HERO": "Cuidamos do seu pet",
+        "SUBTITULO": "Banho, tosa e internacao para caes e gatos em Sao Paulo",
+        "CTA_TEXTO": "Agendar banho",
+        "LINK_CTA": "https://wa.me/5511977776666?text=Quero%20agendar",
+        "CIDADE": "Sao Paulo",
+        "BENEFICIOS": [
+          {"titulo": "Banho hipoalergenico", "descricao": "Produtos naturais para peles sensiveis"},
+          {"titulo": "Hotel com cameras 24h", "descricao": "Monitore seu pet a qualquer momento"},
+          {"titulo": "Veterinario especializado", "descricao": "Atendimento para pequenos animais"}
+        ]
+      },
+      "expected": "success",
+      "checks": ["slug_gerado", "html_gerado", "params_arquivado"]
+    },
+    {
+      "id": "tc_004",
+      "name": "Dados ausentes - bloqueio por telefone faltando",
+      "input": {
+        "NOME_NEGOCIO": "Restaurante Sabor Caseiro",
+        "TITULO_HERO": "Comida caseira feita com amor todos os dias",
+        "SUBTITULO": "Almoco e jantar a la carte no centro de Brasilia",
+        "CTA_TEXTO": "Reservar mesa",
+        "CIDADE": "Brasilia",
+        "BENEFICIOS": [
+          {"titulo": "Ingredientes frescos", "descricao": "Produto do dia, sem congelados"},
+          {"titulo": "Opcoes vegetarianas", "descricao": "Cardapio com 5 opcoes vegetais diarias"},
+          {"titulo": "Delivery gratis acima de R$50", "descricao": "Entrega sem custo na regiao central"}
+        ]
+      },
+      "expected": "blocked",
+      "checks": ["mensagem_erro_clara", "nenhum_html_gerado"]
+    },
+    {
+      "id": "tc_005",
+      "name": "Beneficios no limite exato (3 itens)",
+      "input": {
+        "NOME_NEGOCIO": "Academia Forca Maxima",
+        "TITULO_HERO": "Alcance sua forma fisica ideal conosco",
+        "SUBTITULO": "Musculacao, funcional e lutas em espaco moderno em Belo Horizonte",
+        "CTA_TEXTO": "Comecar agora",
+        "LINK_CTA": "https://wa.me/5531955554444?text=Quero%20comecar",
+        "CIDADE": "Belo Horizonte",
+        "BENEFICIOS": [
+          {"titulo": "Avaliacao gratuita", "descricao": "Avaliacao fisica completa na matricula"},
+          {"titulo": "Funcionamento 24h", "descricao": "Seguranca e acesso 24 horas com monitoramento"},
+          {"titulo": "Aulas coletivas", "descricao": "Spin, funcional e lutas inclusas na mensalidade"}
+        ]
+      },
+      "expected": "success",
+      "checks": ["slug_gerado", "html_gerado", "beneficios_count_verificado", "params_arquivado"]
+    },
+    {
+      "id": "tc_006",
+      "name": "URL sem protocolo - correcao automatica",
+      "input": {
+        "NOME_NEGOCIO": "Barbearia Old School",
+        "TITULO_HERO": "Barba e cabelo no estilo clasico masculino",
+        "SUBTITULO": "Cortes tradicionais e modernos com barbeiros experientes em Curitiba",
+        "CTA_TEXTO": "Agendar corte",
+        "LINK_CTA": "www.barbeariaoldschool.com.br",
+        "CIDADE": "Curitiba",
+        "BENEFICIOS": [
+          {"titulo": "Toalha quente", "descricao": "Corte + barba com toalha quente e massagem facial"},
+          {"titulo": "Produtos premium", "descricao": "Produtos importados para cabelo e barba"},
+          {"titulo": "Ambiente climatizado", "descricao": "Cerveja gratis durante o atendimento"}
+        ]
+      },
+      "expected": "success_auto_protocol",
+      "checks": ["https_adicionado", "slug_gerado", "html_gerado", "params_arquivado"]
+    },
+    {
+      "id": "tc_007",
+      "name": "Cor invalida - fallback para padrao",
+      "input": {
+        "NOME_NEGOCIO": "Estetica Bella Donna",
+        "TITULO_HERO": "Beleza e bem-estar em um so lugar",
+        "SUBTITULO": "Tratamentos faciais, corporais e depilacao a laser em Curitiba",
+        "CTA_TEXTO": "Agendar consulta",
+        "LINK_CTA": "https://wa.me/5541944443333?text=Quero%20agendar",
+        "CIDADE": "Curitiba",
+        "COR_PRIMARIA": "xyz",
+        "COR_ESCURA": "#not-a-color",
+        "BENEFICIOS": [
+          {"titulo": "Depilacao a laser", "descricao": "Tecnologia alema de ultima geracao"},
+          {"titulo": "Peeling personalizado", "descricao": "Peeling facial adaptado ao seu tipo de pele"},
+          {"titulo": "Drenagem linfatica", "descricao": "Massagem especializada para retencao de liquidos"}
+        ]
+      },
+      "expected": "success_fallback",
+      "checks": ["cores_fallback_aplicadas", "slug_gerado", "html_gerado", "params_arquivado"]
+    }
+  ]
+}

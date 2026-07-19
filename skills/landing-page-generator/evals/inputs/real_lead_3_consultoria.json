@@ -1,0 +1,14 @@
+{
+  "NOME_NEGOCIO": "Consultoria Ferreira & Associados",
+  "TITULO_HERO": "Consultoria estrategica para empresas de medio porte que buscam expansao acelerada no mercado digital",
+  "SUBTITULO": "Mais de 200 empresas transformadas com nossa metodologia",
+  "CTA_TEXto": "Agendar reuniao",
+  "LINK_CTA": "https://wa.me/5562977776666?text=Quero%20agendar",
+  "CIDADE": "Goiania",
+  "COR_PRIMARIA": "#0d9488",
+  "COR_ESCURA": "#f0fdfa",
+  "BENEFICIOS": [
+    {"titulo": "Aumento de 40% em 6 meses", "descricao": "Resultados comprovados em cases reais"},
+    {"titulo": "Metodologia validada por Harvard", "descricao": "Framework proprio baseado em pesquisa academica"}
+  ]
+}

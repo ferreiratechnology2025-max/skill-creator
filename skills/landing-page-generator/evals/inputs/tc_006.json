@@ -1,0 +1,14 @@
+{
+  "NOME_NEGOCIO": "Barbearia Old School",
+  "TITULO_HERO": "Barba e cabelo no estilo clássico masculino",
+  "SUBTITULO": "Cortes tradicionais e modernos com barbeiros experientes em Curitiba",
+  "CTA_TEXTO": "Agendar corte",
+  "LINK_CTA": "www.barbeariaoldschool.com.br",
+  "CIDADE": "Curitiba",
+  "BENEFICIOS": [
+    {"titulo": "Toalha quente", "descricao": "Corte + barba com toalha quente e massagem facial"},
+    {"titulo": "Produtos premium", "descricao": "Produtos importados para cabelo e barba"},
+    {"titulo": "Ambiente climatizado", "descricao": "Cerveja grátis durante o atendimento"}
+  ],
+  "SLUG": "barbearia-old-school"
+}

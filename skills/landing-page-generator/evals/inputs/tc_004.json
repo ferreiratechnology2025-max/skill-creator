@@ -1,0 +1,13 @@
+{
+  "NOME_NEGOCIO": "Restaurante Sabor Caseiro",
+  "TITULO_HERO": "Comida caseira feita com amor todos os dias",
+  "SUBTITULO": "Almoço e jantar à la carte no centro de Brasília",
+  "CTA_TEXTO": "Reservar mesa",
+  "CIDADE": "Brasília",
+  "BENEFICIOS": [
+    {"titulo": "Ingredientes frescos", "descricao": "Produto do dia, sem congelados"},
+    {"titulo": "Opções vegetarianas", "descricao": "Cardápio com 5 opções vegetais diárias"},
+    {"titulo": "Delivery grátis acima de R$50", "descricao": "Entrega sem custo na região central"}
+  ],
+  "SLUG": "sabor-caseiro"
+}

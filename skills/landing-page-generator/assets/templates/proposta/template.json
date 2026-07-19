@@ -1,0 +1,63 @@
+{
+  "version": "1.0.0",
+  "template_name": "proposta-comercial",
+  "descricao": "Pagina de proposta comercial para apresentacao de orcamento e servicos a clientes.",
+  "variaveis": {
+    "CLIENTE": {
+      "tipo": "string",
+      "obrigatorio": true,
+      "min_comprimento": 2,
+      "max_comprimento": 80,
+      "exemplo": "Empresa ABC Ltda"
+    },
+    "PROJETO": {
+      "tipo": "string",
+      "obrigatorio": true,
+      "min_comprimento": 5,
+      "max_comprimento": 120,
+      "exemplo": "Redesign do site institucional"
+    },
+    "VALOR": {
+      "tipo": "string",
+      "obrigatorio": true,
+      "pattern": "^R\\$\\s*[0-9.,]+$",
+      "exemplo": "R$ 15.000,00"
+    },
+    "SERVICOS": {
+      "tipo": "lista",
+      "obrigatorio": true,
+      "min_itens": 1,
+      "max_itens": 20,
+      "item_type": "string",
+      "exemplo": ["Design UX/UI", "Desenvolvimento frontend", "Hospedagem por 1 ano"]
+    },
+    "PRAZO": {
+      "tipo": "string",
+      "obrigatorio": true,
+      "exemplo": "45 dias uteis"
+    },
+    "VALIDADE_PROPOSTA": {
+      "tipo": "string",
+      "obrigatorio": false,
+      "padrao": "30 dias",
+      "exemplo": "30 dias"
+    },
+    "CONDICOES_PGTO": {
+      "tipo": "string",
+      "obrigatorio": false,
+      "padrao": "50% na assinatura + 50% na entrega",
+      "exemplo": "50% na assinatura + 50% na entrega"
+    },
+    "CONTATO": {
+      "tipo": "string",
+      "obrigatorio": false,
+      "padrao": "contato@suaempresa.com.br",
+      "exemplo": "contato@suaempresa.com.br"
+    }
+  },
+  "regras": {
+    "slug_geracao": "Derivado de CLIENTE via slugify",
+    "valor_formato": "VALOR deve seguir formato R$ X.XXX,XX",
+    "servicos_minimo": "Mínimo 1 servico obrigatorios"
+  }
+}

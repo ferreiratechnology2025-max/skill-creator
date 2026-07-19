@@ -1,0 +1,101 @@
+{
+  "version": "1.1.0",
+  "template_name": "landing-page",
+  "descricao": "Landing page de conversao para PMEs locais. Hero + beneficios + CTA duplo + rodape LGPD. HTML unico, sem dependencias externas, pronto para deploy estatico.",
+  "variaveis": {
+    "NOME_NEGOCIO": {
+      "tipo": "string",
+      "obrigatorio": true,
+      "min_comprimento": 2,
+      "max_comprimento": 80,
+      "exemplo": "Clinica Sorriso Vivo"
+    },
+    "TITULO_HERO": {
+      "tipo": "string",
+      "obrigatorio": true,
+      "min_comprimento": 10,
+      "max_comprimento": 80,
+      "exemplo": "Seu sorriso novo em ate 30 dias"
+    },
+    "SUBTITULO": {
+      "tipo": "string",
+      "obrigatorio": true,
+      "min_comprimento": 20,
+      "max_comprimento": 200,
+      "exemplo": "Avaliacao gratuita com especialistas em implantes e estetica dental."
+    },
+    "CTA_TEXTO": {
+      "tipo": "string",
+      "obrigatorio": true,
+      "max_comprimento": 30,
+      "exemplo": "Agendar avaliacao"
+    },
+    "LINK_CTA": {
+      "tipo": "url",
+      "obrigatorio": true,
+      "auto_corrigir_protocolo": true,
+      "exemplo": "https://wa.me/5562999990000?text=Quero%20agendar"
+    },
+    "CIDADE": {
+      "tipo": "string",
+      "obrigatorio": true,
+      "exemplo": "Goiania"
+    },
+    "BENEFICIOS": {
+      "tipo": "lista",
+      "obrigatorio": true,
+      "min_itens": 3,
+      "max_itens": 10,
+      "campos": ["titulo", "descricao"],
+      "descricao_item": "Cada beneficio deve ter 'titulo' (max 60 chars) e 'descricao' (max 120 chars)"
+    },
+    "CHAMADA_FINAL": {
+      "tipo": "string",
+      "obrigatorio": false,
+      "padrao": "Pronto para comecar?",
+      "max_comprimento": 60
+    },
+    "META_DESCRICAO": {
+      "tipo": "string",
+      "obrigatorio": false,
+      "max_comprimento": 160,
+      "padrao": "(derivado de SUBTITULO)"
+    },
+    "COR_PRIMARIA": {
+      "tipo": "cor",
+      "obrigatorio": false,
+      "padrao": "#2563eb",
+      "pattern": "^#[0-9a-fA-F]{6}$",
+      "fallback": "Usa #2563eb (azul royal) se valor invalido"
+    },
+    "COR_ESCURA": {
+      "tipo": "cor",
+      "obrigatorio": false,
+      "padrao": "#1e3a8a",
+      "pattern": "^#[0-9a-fA-F]{6}$",
+      "fallback": "Usa #1e3a8a (azul escuro) se valor invalido"
+    },
+    "ANO": {
+      "tipo": "inteiro",
+      "obrigatorio": false,
+      "padrao": "(ano atual)"
+    }
+  },
+  "regras": {
+    "slug_geracao": "Derivado de NOME_NEGOCIO via slugify (normalizacao de acentos, minusculo, simbolos substituidos)",
+    "url_auto_corrigir": "Adiciona https:// se LINK_CTA nao comecar com http:// ou https://",
+    "cores_fallback": "Valores de cor invalidos sao substituidos pelos padrao automaticamente",
+    "beneficios_minimo": "Mínimo 3 beneficios obrigatorios. Maximo 10.",
+    "titulo_limite": "TITULO_HERO deve ter entre 10 e 80 caracteres",
+    "subtitulo_limite": "SUBTITULO deve ter entre 20 e 200 caracteres",
+    "cta_limite": "CTA_TEXTO deve ter no maximo 30 caracteres"
+  },
+  "ajustes_v1_1_0": {
+    "max_beneficios": "Aumentado de 6 para 10 itens para cobrir negocios com mais servicos",
+    "cor_padrao": "Alterada de teal (#0f766e) para azul royal (#2563eb) - mais neutro e profissional",
+    "url_auto_correcao": "Novo: URLs sem protocolo sao corrigidas automaticamente em vez de bloquear",
+    "cores_fallback": "Novo: Cores invalidas recebem fallback em vez de bloquear",
+    "titulo_minimo": "Novo: TITULO_HERO com menos de 10 caracteres é bloqueado",
+    "titulo_maximo": "Mantido em 80 (antes era 60 no SKILL.md, mas template tinha 80 no generate.py)"
+  }
+}

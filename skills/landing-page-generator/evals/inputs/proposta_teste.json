@@ -1,0 +1,17 @@
+{
+  "template": "proposta",
+  "CLIENTE": "Empresa ABC Ltda",
+  "PROJETO": "Redesign do site institucional",
+  "VALOR": "R$ 15.000,00",
+  "SERVICOS": [
+    "Design UX/UI completo",
+    "Desenvolvimento frontend responsivo",
+    "Integração com CMS WordPress",
+    "Otimização SEO básica",
+    "Treinamento de 2 horas para equipe"
+  ],
+  "PRAZO": "45 dias úteis",
+  "VALIDADE_PROPOSTA": "30 dias",
+  "CONDICOES_PGTO": "50% na assinatura + 50% na entrega",
+  "CONTATO": "contato@agenciadigital.com.br"
+}

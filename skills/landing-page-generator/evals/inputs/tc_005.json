@@ -1,0 +1,14 @@
+{
+  "NOME_NEGOCIO": "Academia Força Máxima",
+  "TITULO_HERO": "Alcance sua forma física ideal conosco",
+  "SUBTITULO": "Musculação, funcional e lutas em espaço moderno em Belo Horizonte",
+  "CTA_TEXTO": "Começar agora",
+  "LINK_CTA": "https://wa.me/5531955554444?text=Quero%20comecar",
+  "CIDADE": "Belo Horizonte",
+  "BENEFICIOS": [
+    {"titulo": "Avaliação gratuita", "descricao": "Avaliação física completa na matrícula"},
+    {"titulo": "Funcionamento 24h", "descricao": "Segurança e acesso 24 horas com monitoramento"},
+    {"titulo": "Aulas coletivas", "descricao": "Spin, funcional e lutas inclusas na mensalidade"}
+  ],
+  "SLUG": "academia-forca-maxima"
+}
