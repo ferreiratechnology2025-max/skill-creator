@@ -253,6 +253,7 @@ odontosorriso-site/                    # curado, NAO ignora
 | 7 | Curado ≠ gerado | Exemplos didáticos são commitados; output reproduzível é ignorado |
 | 8 | Desconfie do resumo | Sobretudo o de encerramento — confira números antes de aceitar |
 | 9 | Contrato sem leitor é documentação | Antes de confiar num JSON/YAML de configuração, prove que algo o lê — mude um valor e observe o comportamento, não o arquivo |
+| 10 | Prova bidirecional fecha gate de harness | Quebra deliberada → exit code de falha; conserto → exit code de sucesso. Só um dos dois lados nunca distingue harness que morde de harness que late |
 
 ### 9. Contrato sem leitor é documentação
 
@@ -278,3 +279,9 @@ odontosorriso-site/                    # curado, NAO ignora
 ```
 
 O teste que fez essa pergunta virou guarda permanente: `skills/landing-page-generator/scripts/test_schema_reflete.py`, rodado em todo `test.sh`/`test.bat`. Muda um limite em cópia do schema, roda a validação, exige que o comportamento acompanhe, e restaura o original mesmo se falhar. É a primeira lição deste guia que nasceu com o próprio teste de regressão — commit `c4ae5e9`.
+
+**O quarto membro da família, achado verificando uma alegação em vez de aceitá-la**: uma revisão desta sessão afirmou que um teste de "falha deliberada → exit 1" já tinha sido feito durante a correção do harness. Não tinha. Rodado agora: quebrar o motor de propósito faz `test.sh` completo retornar exit 1 e o estágio `[4/4]` aponta a causa — isso confirma o commit `babe24b` de verdade, não só por alegação. Mas o mesmo procedimento, aplicado ao estágio `[1/4]` por precaução, achou uma doença pré-existente que a pergunta original nem mirava: esse estágio tinha `python generate.py --test-all ... || true`, e o `--test-all` já classificava cada caso como `[OK]`/`[EDGE]`/`[BLOCKED]` no texto da saída — mas esse `|| true` descartava o exit code do processo inteiro. Quebrar `tc_001.json` de propósito (um caso fora do `EXPECTED_FAILS`, que deveria bloquear) fez o `test.sh` completo reportar "All 4 stages passed", exit 0, com uma regressão real de validação passando batida pelos quatro estágios. Commit `346e774` corrige: o exit code de `--test-all` agora conta para o resultado final do harness.
+
+Isso fecha a família começada nos itens 6 e 9: **regra sem check é intenção; contrato sem leitor é documentação; classificação que não chega ao exit code é cosmética.** A saída dizia `[BLOCKED]` linha por linha e o script inteiro ainda dizia "tudo passou" — o texto estava certo, o veredito não escutava o texto.
+
+**Nota sobre proveniência da pergunta**: a sugestão original de como induzir a falha ("remover um marcador do site-exemplo") apontava para o `check.py` de `site-institucional` — skill errada; o harness em prova era o de `landing-page-generator`. A pergunta certa sobrevive ao erro de qual arquivo testar; a verificação foi refeita no harness certo antes de aceitar qualquer veredito.
