@@ -38,16 +38,16 @@ logger = logging.getLogger(__name__)
 SKILL_DIR = Path(__file__).resolve().parent.parent
 TEMPLATES_DIR = SKILL_DIR / "assets" / "templates"
 
-DEFAULTS = {
-    "CHAMADA_FINAL": "Pronto para comecar?",
-    "COR_PRIMARIA": "#2563eb",
-    "COR_ESCURA": "#1e3a8a",
-}
+# Nenhuma regra de negocio (obrigatoriedade, limite, tipo, default) vive
+# aqui como constante. Tudo isso e derivado de template.json em runtime --
+# ver validar() e gerar(). O que resta hardcoded e so o que o JSON nao
+# consegue expressar de forma estatica:
+DEFAULT_SLUG_CAMPO = "NOME_NEGOCIO"
+# "padrao" destes campos no schema e uma descricao em prosa de um valor
+# dinamico ("(ano atual)", "(derivado de SUBTITULO)"), nao um literal --
+# por isso ficam como computo explicito em vez de setdefault(schema.padrao).
+DEFAULTS_DINAMICOS = {"ANO", "META_DESCRICAO"}
 
-# Obrigatorias por template
-OBRIGATORIAS_LANDING = ["NOME_NEGOCIO", "TITULO_HERO", "SUBTITULO", "CTA_TEXTO", "LINK_CTA", "CIDADE", "BENEFICIOS"]
-OBRIGATORIAS_PROPOSTA = ["CLIENTE", "PROJETO", "VALOR", "SERVICOS", "PRAZO"]
-LIMITES = {"TITULO_HERO": 80, "SUBTITULO": 200, "CTA_TEXTO": 30, "META_DESCRICAO": 160}
 COR_RE = re.compile(r"^#[0-9a-fA-F]{6}$")
 URL_RE = re.compile(r"^https?://")
 
@@ -100,69 +100,87 @@ def load_schema(template_name):
     return None
 
 
-def validar(params, template_name="landing-page"):
-    """Valida parametros com base nas regras do template."""
+def validar(params, schema):
+    """Valida parametros com base nas regras declaradas em schema['variaveis'].
+
+    Toda obrigatoriedade, limite de comprimento, contagem de itens, padrao
+    de regex e fallback de cor/url vem do schema -- se o schema nao declara
+    a regra, ela nao e aplicada. Isso substitui as constantes OBRIGATORIAS_*
+    e LIMITES que existiam ate a v1.4.x: eram copias hardcoded do que
+    template.json ja dizia, e podiam (e ficaram) divergentes dele.
+    """
     erros = []
     avisos = []
+    variaveis = schema.get("variaveis", {})
 
-    # Determinar obrigatorias com base no template
-    obrigatorias = OBRIGATORIAS_PROPOSTA if template_name == "proposta" else OBRIGATORIAS_LANDING
-
-    # Validacoes obrigatorias basicas
-    for chave in obrigatorias:
-        if not params.get(chave):
-            erros.append("Variavel obrigatoria ausente ou vazia: {}".format(chave))
-
-    # Validacoes de comprimento
-    for chave, limite in LIMITES.items():
+    for chave, spec in variaveis.items():
+        tipo = spec.get("tipo")
+        obrigatorio = spec.get("obrigatorio", False)
         valor = params.get(chave)
-        if isinstance(valor, str) and len(valor) > limite:
-            erros.append("{} excede {} caracteres ({}). Reduza.".format(chave, limite, len(valor)))
 
-    # Minimo de caracteres para TITULO_HERO
-    titulo = params.get("TITULO_HERO", "")
-    if isinstance(titulo, str) and 0 < len(titulo) < 10:
-        erros.append("TITULO_HERO deve ter pelo menos 10 caracteres (tem {})".format(len(titulo)))
+        if obrigatorio and not valor:
+            erros.append("Variavel obrigatoria ausente ou vazia: {}".format(chave))
+            continue
+        if valor is None:
+            continue
 
-    # Validar SUBTITULO minimo
-    subt = params.get("SUBTITULO", "")
-    if isinstance(subt, str) and 0 < len(subt) < 20:
-        avisos.append("SUBTITULO com apenas {} caracteres (recomendado >= 20)".format(len(subt)))
+        if isinstance(valor, str):
+            min_c = spec.get("min_comprimento")
+            max_c = spec.get("max_comprimento")
+            if min_c is not None and 0 < len(valor) < min_c:
+                erros.append("{} deve ter pelo menos {} caracteres (tem {})".format(chave, min_c, len(valor)))
+            if max_c is not None and len(valor) > max_c:
+                erros.append("{} excede {} caracteres ({}). Reduza.".format(chave, max_c, len(valor)))
+            # "pattern" em tipo "cor" tem fallback silencioso (ver abaixo);
+            # em qualquer outro tipo string, e um formato obrigatorio.
+            pattern = spec.get("pattern")
+            if pattern and tipo != "cor" and not re.match(pattern, valor):
+                erros.append("{} nao corresponde ao formato esperado ({})".format(chave, pattern))
 
-    # Validar beneficios
-    beneficios = params.get("BENEFICIOS")
-    if isinstance(beneficios, list):
-        if not (3 <= len(beneficios) <= 10):
-            erros.append("BENEFICIOS deve ter entre 3 e 10 itens (tem {})".format(len(beneficios)))
-        for i, item in enumerate(beneficios):
-            if not isinstance(item, dict) or not item.get("titulo") or not item.get("descricao"):
-                erros.append("BENEFICIOS[{}] precisa dos campos 'titulo' e 'descricao'".format(i))
+        if tipo == "lista":
+            if not isinstance(valor, list):
+                erros.append("{} deve ser uma lista".format(chave))
             else:
-                if len(str(item.get("titulo", ""))) > 60:
-                    avisos.append("BENEFICIOS[{}] titulo excede 60 caracteres".format(i))
-                if len(str(item.get("descricao", ""))) > 120:
-                    avisos.append("BENEFICIOS[{}] descricao excede 120 caracteres".format(i))
-    elif beneficios is not None:
-        erros.append("BENEFICIOS deve ser uma lista de objetos {titulo, descricao}")
+                min_i, max_i = spec.get("min_itens"), spec.get("max_itens")
+                if min_i is not None and max_i is not None and not (min_i <= len(valor) <= max_i):
+                    erros.append("{} deve ter entre {} e {} itens (tem {})".format(chave, min_i, max_i, len(valor)))
+                campos = spec.get("campos")
+                campos_limites = spec.get("campos_limites", {})
+                if campos:
+                    for i, item in enumerate(valor):
+                        if not isinstance(item, dict) or any(not item.get(c) for c in campos):
+                            erros.append("{}[{}] precisa dos campos {}".format(chave, i, ", ".join(campos)))
+                            continue
+                        for campo, lim in campos_limites.items():
+                            v = str(item.get(campo, ""))
+                            if len(v) > lim:
+                                avisos.append("{}[{}] {} excede {} caracteres".format(chave, i, campo, lim))
 
-    # Auto-correcao de cores invalidas -> fallback
-    for chave in ("COR_PRIMARIA", "COR_ESCURA"):
-        if chave in params and not COR_RE.match(str(params[chave])):
-            avisos.append("{} invalida '{}' -> fallback para {}".format(chave, params[chave], DEFAULTS[chave]))
-            params[chave] = DEFAULTS[chave]
+        if tipo == "url" and spec.get("auto_corrigir_protocolo") and not URL_RE.match(str(valor)):
+            v = str(valor)
+            if "://" in v:
+                # ja tem um esquema, so que invalido (typo estrutural, ex.
+                # "ttps://..."). Corrigir aqui produziria protocolo duplicado
+                # ("https://ttps://...") -- bloqueia em vez de adivinhar.
+                erros.append("{} invalida: {}".format(chave, v))
+            else:
+                v_limpo = v.lstrip("/")
+                if "." in v_limpo:
+                    candidato = "https://" + v_limpo
+                    params[chave] = candidato
+                    avisos.append("{} sem protocolo -> corrigido para {}".format(chave, candidato))
+                else:
+                    erros.append("{} invalida: {}".format(chave, v))
 
-    # Auto-correcao de URL sem protocolo
-    link = params.get("LINK_CTA", "")
-    if link and not URL_RE.match(str(link)):
-        link_str = str(link)
-        if not link_str.startswith("http"):
-            params["LINK_CTA"] = "https://" + link_str
-            avisos.append("LINK_CTA sem protocolo -> corrigido para https://" + link_str)
-
-    # Validar CTA_TEXTO minimo
-    cta = params.get("CTA_TEXTO", "")
-    if isinstance(cta, str) and len(cta) < 3:
-        avisos.append("CTA_TEXTO muito curto ({} chars). Recomenda-se pelo menos 3.".format(len(cta)))
+        if tipo == "cor":
+            pattern = spec.get("pattern")
+            if pattern and not re.match(pattern, str(valor)):
+                fallback = spec.get("padrao")
+                if fallback:
+                    avisos.append("{} invalida '{}' -> fallback para {}".format(chave, valor, fallback))
+                    params[chave] = fallback
+                else:
+                    erros.append("{} invalida '{}' e schema nao declara 'padrao' para fallback".format(chave, valor))
 
     return erros, avisos
 
@@ -211,8 +229,10 @@ def gerar(params, template_name="landing-page", out_base=None):
     if out_base is None:
         out_base = SKILL_DIR / "output"
 
+    schema = load_schema(template_name) or {"variaveis": {}}
+
     # Validar
-    erros, avisos = validar(params, template_name)
+    erros, avisos = validar(params, schema)
 
     if erros:
         logger.error("VALIDACAO FALHOU:")
@@ -239,11 +259,22 @@ def gerar(params, template_name="landing-page", out_base=None):
             "output_path": None,
         }
 
-    # Aplicar defaults
-    for k, v in DEFAULTS.items():
-        params.setdefault(k, v)
-    params.setdefault("ANO", date.today().year)
-    params.setdefault("META_DESCRICAO", params.get("SUBTITULO", ""))
+    # Aplicar defaults literais declarados no schema (campo "padrao")
+    variaveis = schema.get("variaveis", {})
+    for chave, spec in variaveis.items():
+        if chave in DEFAULTS_DINAMICOS:
+            continue
+        padrao = spec.get("padrao")
+        if padrao is not None:
+            params.setdefault(chave, padrao)
+
+    # Defaults dinamicos: o schema documenta a intencao em prosa
+    # ("(ano atual)", "(derivado de SUBTITULO)"), o computo mora aqui
+    # porque nao ha como expressar isso como literal em JSON estatico.
+    if "ANO" in variaveis:
+        params.setdefault("ANO", date.today().year)
+    if "META_DESCRICAO" in variaveis:
+        params.setdefault("META_DESCRICAO", params.get("SUBTITULO", ""))
 
     # Renderizar
     html = renderizar(template, params)
@@ -261,10 +292,7 @@ def gerar(params, template_name="landing-page", out_base=None):
         }
 
     # Gerar slug e salvar
-    if template_name == "proposta":
-        slug_key = "CLIENTE"
-    else:
-        slug_key = "NOME_NEGOCIO"
+    slug_key = schema.get("slug_campo", DEFAULT_SLUG_CAMPO)
     slug = params.get("SLUG") or slugify(params.get(slug_key, "documento"))
     destino = out_base / slug
     destino.mkdir(parents=True, exist_ok=True)

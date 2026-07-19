@@ -34,7 +34,7 @@ if errorlevel 1 (
 )
 echo.
 
-echo [3/3] Executando QA nos arquivos gerados...
+echo [3/4] Executando QA nos arquivos gerados...
 echo -----------------------------------------------
 for /d %%D in ("%OUTPUT_DIR%\*") do (
     if exist "%%D\index.html" (
@@ -43,6 +43,14 @@ for /d %%D in ("%OUTPUT_DIR%\*") do (
         echo.
     )
 )
+
+echo [4/4] Regressao: schema comanda a validacao (Fase 5, gate 2)...
+echo -----------------------------------------------
+python "%SCRIPTS_DIR%\test_schema_reflete.py"
+if errorlevel 1 (
+    echo [ERRO] Mudanca no schema nao refletiu no comportamento do generate.py.
+)
+echo.
 
 echo ========================================
 echo Testes finalizados!

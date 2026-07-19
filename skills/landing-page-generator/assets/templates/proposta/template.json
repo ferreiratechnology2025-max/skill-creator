@@ -1,7 +1,8 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "template_name": "proposta-comercial",
   "descricao": "Pagina de proposta comercial para apresentacao de orcamento e servicos a clientes.",
+  "slug_campo": "CLIENTE",
   "variaveis": {
     "CLIENTE": {
       "tipo": "string",
@@ -53,11 +54,20 @@
       "obrigatorio": false,
       "padrao": "contato@suaempresa.com.br",
       "exemplo": "contato@suaempresa.com.br"
+    },
+    "ANO": {
+      "tipo": "inteiro",
+      "obrigatorio": false,
+      "padrao": "(ano atual)"
     }
   },
   "regras": {
     "slug_geracao": "Derivado de CLIENTE via slugify",
     "valor_formato": "VALOR deve seguir formato R$ X.XXX,XX",
     "servicos_minimo": "Mínimo 1 servico obrigatorios"
+  },
+  "ajustes_v1_1_0": {
+    "fonte_de_verdade": "Ate generate.py derivar validacao deste arquivo (ver ajustes_v1_2_0 do template landing-page), NENHUMA regra deste template era aplicada alem da presenca dos campos obrigatorios -- LIMITES no motor so cobria campos do template landing-page. max_comprimento de CLIENTE/PROJETO, o pattern de VALOR e min_itens/max_itens de SERVICOS nunca foram validados de fato. Agora sao.",
+    "ano_nao_declarado": "index.html deste template usa {{ANO}} em 2 lugares (data da proposta + rodape), mas a variavel nunca esteve em 'variaveis' -- so nao quebrava porque generate.py aplicava um default de ANO incondicional para todo template, sem checar se o schema declarava. Corrigido nos dois lados: ANO agora declarado aqui, e generate.py so aplica o default se a variavel estiver no schema."
   }
 }

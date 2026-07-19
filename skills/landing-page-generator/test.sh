@@ -31,7 +31,7 @@ python "$SCRIPTS_DIR/generate.py" --template proposta "$EVALS_DIR/proposta_teste
 echo "[OK] Proposal generated successfully."
 echo ""
 
-echo "[3/3] Running QA on generated files..."
+echo "[3/4] Running QA on generated files..."
 echo "-----------------------------------------------"
 for dir in "$OUTPUT_DIR"/*/; do
     if [ -f "${dir}index.html" ]; then
@@ -41,6 +41,14 @@ for dir in "$OUTPUT_DIR"/*/; do
         echo ""
     fi
 done
+
+echo "[4/4] Regression: schema drives validation (Fase 5, gate 2)..."
+echo "-----------------------------------------------"
+python "$SCRIPTS_DIR/test_schema_reflete.py" || {
+    echo "[ERROR] Schema change did not reflect in generate.py behavior."
+    exit 1
+}
+echo ""
 
 echo "========================================"
 echo "Tests completed!"

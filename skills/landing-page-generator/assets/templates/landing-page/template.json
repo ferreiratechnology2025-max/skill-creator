@@ -1,7 +1,8 @@
 {
-  "version": "1.1.0",
+  "version": "1.2.0",
   "template_name": "landing-page",
   "descricao": "Landing page de conversao para PMEs locais. Hero + beneficios + CTA duplo + rodape LGPD. HTML unico, sem dependencias externas, pronto para deploy estatico.",
+  "slug_campo": "NOME_NEGOCIO",
   "variaveis": {
     "NOME_NEGOCIO": {
       "tipo": "string",
@@ -27,6 +28,7 @@
     "CTA_TEXTO": {
       "tipo": "string",
       "obrigatorio": true,
+      "min_comprimento": 3,
       "max_comprimento": 30,
       "exemplo": "Agendar avaliacao"
     },
@@ -47,6 +49,7 @@
       "min_itens": 3,
       "max_itens": 10,
       "campos": ["titulo", "descricao"],
+      "campos_limites": {"titulo": 60, "descricao": 120},
       "descricao_item": "Cada beneficio deve ter 'titulo' (max 60 chars) e 'descricao' (max 120 chars)"
     },
     "CHAMADA_FINAL": {
@@ -97,5 +100,10 @@
     "cores_fallback": "Novo: Cores invalidas recebem fallback em vez de bloquear",
     "titulo_minimo": "Novo: TITULO_HERO com menos de 10 caracteres é bloqueado",
     "titulo_maximo": "Mantido em 80 (antes era 60 no SKILL.md, mas template tinha 80 no generate.py)"
+  },
+  "ajustes_v1_2_0": {
+    "fonte_de_verdade": "generate.py agora deriva obrigatoriedade/limites/tipos deste arquivo em runtime, em vez de ter copia hardcoded (LIMITES/OBRIGATORIAS_LANDING). Ate v1.1.0 este JSON era documentacao paralela: max_comprimento de NOME_NEGOCIO e CHAMADA_FINAL nunca foi aplicado, e mudar um valor aqui nao mudava o comportamento do motor -- confirmado empiricamente com o experimento TITULO_HERO 80->90 que motivou esta correcao.",
+    "cta_minimo": "Novo: min_comprimento 3 adicionado -- regra ja existia hardcoded no generate.py sem estar declarada aqui",
+    "beneficios_campos_limites": "Novo: campos_limites {titulo: 60, descricao: 120} -- os numeros ja estavam em descricao_item (prosa), agora sao lidos pelo validador"
   }
 }
