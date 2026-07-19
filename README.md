@@ -78,6 +78,21 @@ Ou descreva diretamente:
 /criar-skill quero algo que me ajude a gerar relatório de vendas semanal
 ```
 
+### Skill: Landing Page Generator
+
+Para gerar landing pages de PMEs:
+
+```
+/criar-skill crie uma landing page para a clínica OdontoSorriso em Goiania, whatsapp 62999999999
+```
+
+Ou execute diretamente:
+
+```bash
+cd skills/landing-page-generator
+python scripts/generate.py params.json
+```
+
 ### No Wizard Visual
 
 1. Abra `wizard.html` no navegador
@@ -88,18 +103,25 @@ Ou descreva diretamente:
 
 ---
 
-## 📚 Biblioteca de Templates
+## 📚 Biblioteca de Skills
 
-O wizard inclui templates prontos:
+### Skills do Projeto Principal
 
-| Template | Descrição |
-|----------|-----------|
+| Skill | Descrição |
+|-------|-----------|
+| 🏗️ Skill Creator | Agente criador de skills (esta skill) |
 | 🎯 LeadFlow Brasil | Geração e outreach de leads B2B |
 | 📊 Relatório de Vendas | CSV → relatório por região |
 | 🔍 Análise de Concorrentes | Compara preços e features |
 | 💬 Responder Comentários | Instagram/LinkedIn no tom da marca |
 | 📝 Posts LinkedIn | Vídeo/texto → post engajador |
 | 📄 Emissão de NF | Automatiza NF-e |
+
+### Skills de Terceiros (subdiretório `skills/`)
+
+| Skill | Descrição |
+|-------|-----------|
+| 🌐 Landing Page Generator | Gera landing pages de conversão para PMEs |
 
 ---
 

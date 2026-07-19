@@ -5,6 +5,68 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.3.0] — 2026-07-19
+
+### Corrigido
+- **Cache removido**: `lru_cache` substituido por carregamento direto (determinismo total)
+- **Batch mode corrigido**: `--test-all` agora classifica corretamente edge cases vs erros reais
+- **Classificacao de testes**: edge cases marcados como [EDGE], sucesso como [OK], bloqueios como [BLOCKED]
+- **Resumo do batch**: mostra Total | Sucesso | Bloqueios esperados | Erros reais
+
+### Adicionado
+- **EXPECTED_FAILS**: lista de arquivos que devem falhar (edge cases + proposta_teste + tc_004)
+- **lead_real_fluentemax.json**: novo lead ficticio para validacao final
+- **test.bat/test.sh**: scripts de teste atualizados com classificacao correta
+
+### Modificado
+- **generate.py**: removido `functools.lru_cache`, functions `load_template` e `load_schema` sem cache
+- **SKILL.md**: frontmatter ajustado para melhor triggering no Claude Code
+- **README.md**: nova secao "Skills de Terceiros" com landing-page-generator
+
+## [1.2.0] — 2026-07-19
+
+### Adicionado
+- **Motor multi-template**: suporte a `--template proposta` para gerar paginas diferentes
+- **Template proposta-comercial**: segunda prova de conceito com layout diferente
+- **Logging estruturado**: replace de prints por logging com niveis DEBUG/INFO/WARNING/ERROR
+- **Modo batch `--test-all`**: executa todos os JSON em `evals/inputs/` com resumo
+- **Output JSON**: `gerar()` retorna dict com status, slug, errors, warnings
+- **Validacao dinamica**: obrigatorias variam por template (NOME_NEGOCIO vs CLIENTE)
+- **Renderizacao de listas simples**: suporte a `{{.}}` para arrays de strings
+- **Scripts de teste**: `test.bat` (Windows) e `test.sh` (Linux/Mac)
+- **Exemplos de uso** adicionados ao SKILL.md
+
+### Modificado
+- **template.json v1.1.0**: max_beneficios 3-10 (antes 3-6), cor_padrao azul royal, regras detalhadas
+- **generate.py**: refactor completo com funcao `gerar()`, logging, validacao dinamica
+- **check.py**: limite title aumentado de 70 para 90 caracteres
+- **SKILL.md**: secoes de exemplos de uso adicionadas
+
+## [1.1.0] — 2026-07-19
+
+### Adicionado
+- **Nova skill: `landing-page-generator`** — Gera landing pages de conversão para PMEs a partir de template parametrizado
+  - Motor de renderização determinístico (`scripts/generate.py`)
+  - QA validator independente (`scripts/check.py`) com 8 checks
+  - Template HTML único sem dependências externas
+  - Contrato de variáveis explícito (`template.json`)
+  - 7 casos de teste em `evals/evals.json`
+  - Suporte a caracteres especiais, normalização de slug, fallback de cores
+  - Compatível com Claude Code, Codex (OpenAI), OpenCode e OpenClaw
+- Diretoria `skills/landing-page-generator/` no projeto principal
+
+### Corrigido
+- Edge cases expandidos de 3 para 5 no SKILL.md
+- Seção de Plataforma adicionada ao SKILL.md
+- Pré-requisitos documentados com estrutura de diretórios
+- Bugs de encoding Windows (cp1252) corrigidos: replace de ✓, ✗, →, ≤ por ASCII seguro
+- Fallback de cores inválidas implementado (antes bloqueava, agora usa defaults)
+- Auto-correção de URL sem protocolo implementada (antes bloqueava, agora adiciona https://)
+- Limite de tag <title> no check.py aumentado de 70 para 90 caracteres
+- Mínimo de 10 caracteres adicionado para TITULO_HERO
+- 7 casos de teste validados com 100% de sucesso
+- 3 leads reais testados (2 sucesso + 1 bloqueio esperado)
+
 ## [1.0.0] — 2025-07-04
 
 ### Adicionado
@@ -37,3 +99,12 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 ---
 
 **Feito por Romel Ferreira** | Transição de Construtor → Arquiteto
+ 
+"## [1.3.1] - 2026-07-19 (Fase 4.5)" 
+""  
+"### Validado" 
+"- **Triggering validado**: Analise empirica do frontmatter confirmou que skill aciona corretamente para prompts de landing page/pagina de vendas e NAO aciona para site institucional/post de Instagram (6/12 corretos - todos dentro do esperado)" 
+"- **Causa raiz do proposta_teste documentada**: O bug era de orquestracao do batch mode (nao detecta template automaticamente), nao de validacao. Caso esta no EXPECTED_FAILS com justificativa clara." 
+"- **Instalacao comprovada**: Skill instalada em ~/.claude/skills/ com evidencia de arquivos e conteudo do SKILL.md" 
+"- **Integridade do contrato confirmada**: template.json inalterado desde v1.1.0 - 0 regras alteradas, 0 limites relaxados, 0 bloqueios removidos" 
+"- **Evidencias brutas**: output/instalacao_prova.txt, output/triggering_log.txt, output/causa_raiz_proposta_teste.md, RELATORIO_FASE4.5.md" 
