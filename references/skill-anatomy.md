@@ -6,7 +6,18 @@
 skill-nome-da-skill/
 ├── SKILL.md              # Obrigatório
 └── evals/
-    └── evals.json        # Obrigatório
+    └── evals.json        # Obrigatório (skill sem fronteira ambígua com outra)
+```
+
+Para skills com risco real de confusão de acionamento com uma skill vizinha
+(ex. `landing-page-generator` vs `site-institucional`), separar em duas
+superfícies — ver "Duas Superfícies de Teste" abaixo:
+
+```
+skill-nome-da-skill/
+└── evals/
+    ├── motor.json        # input → output do motor (params corretos)
+    └── triggering.json   # prompt → aciona/não aciona (inclui cruzados)
 ```
 
 ## Estrutura Completa (quando necessário)
@@ -102,7 +113,30 @@ description: Descrição clara do que faz e quando ativar
 4. Atualizar evals.json
 ```
 
-## evals.json - Estrutura
+## Duas Superfícies de Teste
+
+Uma skill tem dois tipos de comportamento distintos, e cada um exige seu
+próprio eval — misturá-los num `evals.json` só funciona enquanto a skill
+não tem vizinha ambígua no catálogo (ver `landing-page-generator` vs
+`site-institucional`, Cenário C de `RELATORIO_FASE4.5.md`):
+
+1. **Motor** (`evals/motor.json`): dado um input estruturado (params,
+   dados de negócio), o motor produz o output correto? Testa o código que
+   renderiza/gera. Formato: `params.json`-like, com `expected` de sucesso
+   ou bloqueio.
+2. **Triggering** (`evals/triggering.json`): dado um prompt em linguagem
+   natural, a skill certa é acionada — e as vizinhas não? Testa o
+   frontmatter/`description`, não o motor. Sempre incluir casos cruzados:
+   um prompt que deveria acionar a skill vizinha e não esta, e vice-versa.
+
+Não duplicar cenários de triggering num formato feito para o motor (ou
+vice-versa) — formato incompatível reaproveitado parece cobertura e não
+roda. Se a skill não tem vizinha ambígua, um único `evals.json` no formato
+"motor" ou "triggering" (o que fizer sentido para a skill) é suficiente;
+a separação em dois arquivos só se justifica quando os dois tipos de teste
+coexistem de fato.
+
+## evals.json / motor.json - Estrutura
 
 ```json
 [
@@ -125,6 +159,28 @@ description: Descrição clara do que faz e quando ativar
 - 1+ edge cases
 - Nomes descritivos
 - Inputs e outputs como strings
+
+## triggering.json - Estrutura
+
+Mesmo formato de `{name, input, expected_output}`, mas `input` é sempre um
+prompt em linguagem natural e `expected_output` declara explicitamente
+qual skill aciona (ou nenhuma) e por quê:
+
+```json
+[
+  {
+    "name": "cross_scenario_vizinha_nao_aciona",
+    "input": "prompt que deveria acionar a skill vizinha, não esta",
+    "expected_output": "Aciona <skill-vizinha>. Esta skill NÃO é acionada — motivo específico do frontmatter/semântica que evita a ambiguidade."
+  }
+]
+```
+
+### Regras do Triggering
+- Mínimo 1 caso cruzado por skill vizinha ambígua conhecida
+- `expected_output` sempre nomeia a skill esperada, nunca só "aciona"/"não aciona"
+- Triggering só é validado de verdade com sessão real rodando o prompt —
+  casos em disco documentam a expectativa, não substituem a checagem ao vivo
 
 ## Nomenclatura
 
@@ -189,6 +245,7 @@ Antes de considerar uma skill "pronta":
 - [ ] Exemplo real de saída
 - [ ] Mínimo 2 edge cases
 - [ ] Zero credenciais expostas
-- [ ] evals.json com 2+ casos
+- [ ] evals/motor.json (ou evals.json) com 2+ casos
+- [ ] Se há skill vizinha ambígua no catálogo: evals/triggering.json com caso(s) cruzado(s)
 - [ ] Pré-requisitos documentados
 - [ ] Regras invioláveis definidas

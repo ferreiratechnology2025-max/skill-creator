@@ -5,6 +5,20 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.4.0] — 2026-07-19
+
+### Adicionado
+- **Nova skill: `site-institucional`** — gera site multi-página (tipicamente 5) para negócio local, com token system de design próprio por briefing e regra de proveniência executável
+  - `SKILL.md` com regra inviolável: todo claim de aparência factual (CRO/CNPJ, preço, telefone, endereço, contagem de clientes/anos, promessas operacionais) tem proveniência declarada — `fonte: busca | usuário | placeholder`
+  - `scripts/check.py` v2: QA independente com 9 categorias de claim (CRO/CNPJ, preço, telefone, contagem, ano de fundação, prazo em dias úteis, parcelamento, promessa "mesmo dia", duração), janela de 20 linhas entre claim e marcador de proveniência
+  - `evals/triggering.json`: 6 casos incluindo cenários cruzados com `landing-page-generator` (cada skill é o teste negativo da outra) e edge case de dados completos fornecidos pelo usuário (`fonte: usuário`, sem placeholder)
+- **Site-exemplo canônico**: OdontoSorriso (5 páginas, em `D:\skill-creator\odontosorriso-site\`, fora deste repositório), gerado sem nenhum dado real de entrada, 100% dos claims fabricados marcados com `<!-- PLACEHOLDER fonte: nenhuma -->` e 5/5 checks passando em todas as páginas com o check v2
+- **`references/skill-anatomy.md`**: formaliza as duas superfícies de teste de uma skill — `evals/motor.json` (input→output do motor) e `evals/triggering.json` (prompt→aciona/não aciona, incluindo cruzados) — como estrutura de primeira classe, com regra explícita de que triggering em disco documenta expectativa mas não substitui checagem ao vivo
+
+### Corrigido
+- **Gap de marcação no site-exemplo**: auditoria com o `check.py` v1 achou blocos de dado fabricado sem marcador de proveniência (1 card de equipe fora da janela de 20 linhas do marcador de topo; 6 promessas operacionais + "desde 2012" em 5 rodapés, em nenhuma categoria coberta pelo check v1). Corrigido com marcação individual por bloco (Opção A: redundância explícita) e as 5 novas categorias de regex do check v2.
+- **Regra de janela vs. cobertura de categoria**: a auditoria separou dois mecanismos de falha distintos — falso-negativo por distância da âncora (janela de 20 linhas insuficiente para blocos espaçados) e categoria de claim sem regex correspondente (o check nunca olhava para essas). Documentado no docstring do `check.py` v2: uma categoria nova de claim factual sem regex correspondente continua passando despercebida até ser adicionada — o check cobre o que foi enumerado, não é exaustivo por construção.
+
 ## [1.3.0] — 2026-07-19
 
 ### Corrigido

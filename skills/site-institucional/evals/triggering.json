@@ -1,0 +1,32 @@
+[
+  {
+    "name": "caso_feliz_sem_dados_fornecidos",
+    "input": "cria um site institucional de 5 páginas para a clínica OdontoSorriso",
+    "expected_output": "5 páginas HTML + CSS/JS compartilhados com identidade visual própria ao setor. Todo dado factual específico (telefone, endereço, CRO, preços, nomes de equipe, contagem de pacientes) gerado como placeholder plausível, marcado com comentário HTML '<!-- PLACEHOLDER fonte: nenhuma -->' imediatamente acima de cada bloco, e listado em texto ao usuário ao final."
+  },
+  {
+    "name": "edge_dados_completos_fornecidos_pelo_usuario",
+    "input": "cria um site institucional de 4 páginas para a Padaria Trigo Dourado — telefone (62) 3333-1000, endereço Rua das Flores 90, Goiânia, fundada em 2008",
+    "expected_output": "Telefone, endereço e ano de fundação usados diretamente no conteúdo com 'fonte: usuário' — SEM comentário PLACEHOLDER nesses três campos, porque vieram do próprio pedido. Demais claims não fornecidos (nomes de padeiros, preços, contagem de clientes) seguem como placeholder marcado normalmente."
+  },
+  {
+    "name": "edge_ambiguidade_landing_page_vs_institucional",
+    "input": "preciso de uma página para minha clínica",
+    "expected_output": "Agente pergunta antes de agir: página única com objetivo de conversão específico (→ landing-page-generator) ou site institucional multi-página (→ site-institucional)? Não assume nenhuma das duas skills sem essa clarificação."
+  },
+  {
+    "name": "cross_scenario_landing_page_nao_aciona_site_institucional",
+    "input": "cria uma landing page para a Clínica Dental Sorriso, CTA agendar avaliação, WhatsApp 62999999999",
+    "expected_output": "Aciona landing-page-generator (termo explícito 'landing page' no frontmatter dessa skill). site-institucional NÃO é acionada — pedido é de página única com CTA de conversão, não de site multi-página."
+  },
+  {
+    "name": "cross_scenario_site_institucional_nao_aciona_landing_page_generator",
+    "input": "cria um site institucional de 5 páginas para a clínica OdontoSorriso",
+    "expected_output": "Aciona site-institucional. landing-page-generator NÃO é acionada — 'site institucional' e '5 páginas' não são termos do frontmatter dessa skill, e implicam múltiplas páginas navegáveis, semanticamente diferente de uma landing page única. (Espelha o Cenário C documentado em RELATORIO_FASE4.5.md:110 do landing-page-generator, que valida a mesma fronteira pelo lado oposto.)"
+  },
+  {
+    "name": "qa_check_dado_ficticio_sem_marcacao",
+    "input": "Página gerada contém 'CRO-SP 12345' sem nenhum comentário PLACEHOLDER nem fonte declarada nas linhas ao redor",
+    "expected_output": "scripts/check.py falha o check 'Claims de aparência factual com proveniência declarada'. Bloqueia entrega até o bloco ser marcado com PLACEHOLDER ou ter fonte:usuário/fonte:busca comprovável."
+  }
+]
