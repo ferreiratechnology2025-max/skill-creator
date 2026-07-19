@@ -172,3 +172,83 @@ Uma skill está "pronta" quando:
 > **Documente cada falha como um presente.**
 > Cada bug encontrado é uma oportunidade de tornar a skill mais robusta para sempre.
 > Skills que passaram por 3-5 ciclos de refinamento são significativamente mais confiáveis que skills "perfeitas" na primeira tentativa.
+
+---
+
+## Jurisprudência do Processo de Aceite (2026-07-19)
+
+O que vem acima é o guia genérico. O que vem abaixo não é teórico — é o processo
+de aceite que este projeto usou de verdade na construção de `landing-page-generator`
+e `site-institucional`, extraído retroativamente da sessão que os produziu. Cada
+regra abaixo foi checada contra o repositório antes de entrar aqui; onde a checagem
+não bateu, a regra foi corrigida ou marcada como não verificada — porque a regra 8
+se aplica a este próprio documento.
+
+### 1. Evidência bruta ou não aconteceu
+
+**A regra**: um relatório de correção não é aceito só porque afirma ter corrigido algo — precisa de evidência que possa ser checada de novo, depois, por outra pessoa (diff, grep, execução).
+
+**Origem**: **não verificável neste repositório.** Uma versão anterior deste guia citava "Fase 3, seção File-mutation verifier" com `sha256sum` e um bug de path `/d/` vs `C:\d\` como origem desta regra. Busca ampla (`grep -rni "file-mutation|resolve_template|sha256"`) não encontrou essa seção em `RELATORIO_FASE3.md` nem em nenhum outro arquivo do projeto. A citação não resistiu ao grep — mantida aqui sem a origem fabricada, porque a regra em si é correta e este é o exemplo mais direto possível de por que ela precisa existir: mesmo uma citação de origem pode ser inventada com aparência de precisão.
+
+### 2. Triggering só existe em sessão real
+
+**A regra**: um teste de "a skill aciona no prompt X" não é validado por leitura de frontmatter — só por rodar o prompt de verdade e observar o que acontece.
+
+**Origem verificável**: `skills/landing-page-generator/RELATORIO_FASE4.md:114,188` — "O frontmatter atual é suficiente... Triggering analisado — frontmatter atual é suficiente" foi o veredito da Fase 4, sem instalação nem sessão ao vivo. Confirmado por grep nesta sessão.
+
+### 3. Transcrição ganha de relato — de agente e de humano
+
+**A regra**: em disputa sobre o que aconteceu numa sessão, grep na transcrição resolve — não importa se a alegação é de um agente ou de um humano.
+
+**Origem verificável**: nesta mesma sessão, uma única checagem de transcrição corrigiu três alegações ao mesmo tempo — a hipótese de mistura de fontes (não havia fontes), a lembrança de "vi ele acionando" (era `Skill(frontend-design)`, não busca), e um relatório citando o nome "Odontofarris" (não aparece em nenhum arquivo). Nenhuma das três resistiu a `grep`.
+
+### 4. Explícito ganha de inferido — e o relatório que documenta a correção também pode ficar desatualizado
+
+**A regra**: prefira um campo declarado explicitamente a uma heurística de inferência. E: um relatório que documenta "a correção foi X" descreve o estado do código *naquele momento* — não é garantia de que X ainda é a correção vigente.
+
+**Origem verificável**: `skills/landing-page-generator/scripts/generate.py:65-75`, função `resolve_template(params)`: usa o campo explícito `"template"` se presente, com fallback heurístico documentado no próprio docstring. `RELATORIO_FASE4.5.md:147` registra a correção histórica como "adicionar `proposta_teste.json` ao `EXPECTED_FAILS`" — mas o `EXPECTED_FAILS` atual em `generate.py:55-62` **não contém** `proposta_teste.json`. A correção real e vigente é `resolve_template()`, que veio depois e substituiu o workaround documentado no relatório. O relatório não mentiu — só ficou para trás.
+
+### 5. O check cresce por jurisprudência
+
+**A regra**: cada gap de proveniência achado por auditoria manual vira uma nova categoria de regex no `check.py` — o check não é projetado de uma vez, é construído por caso real.
+
+**Origem verificável**: `check.py` v1 cobria 4 categorias (CRO/CNPJ, preço, telefone, contagem). Auditoria manual do site-exemplo, nesta sessão, achou 11 ocorrências em categorias não cobertas: "desde 2012" sem marcador em 5 rodapés + 6 promessas operacionais ("1 dia útil", "6x sem juros", "40 minutos", "mesmo dia" ×3) espalhadas em `index.html`, `contato.html` e `servicos.html`. As 5 categorias novas do check v2 vieram direto dessas 11 ocorrências.
+
+### 6. Regra sem check é intenção
+
+**A regra**: se a regra não está codificada num check que roda, ela não existe para o código — só existe na cabeça de quem a escreveu.
+
+**Origem verificável**: o autor da regra de proveniência, aplicando-a conscientemente sobre o site-exemplo, ainda assim deixou 3 das 5 páginas passarem no primeiro `check.py` sem marcação completa (achado pela primeira rodada real do check, não por releitura manual). Disciplina não escala; check escala.
+
+### 7. Curado ≠ gerado no versionamento
+
+**A regra**: outputs gerados por execução de teste (reproduzíveis rodando o script de novo) nunca são commitados. Artefatos curados manualmente — exemplos didáticos, fixtures, documentação — sempre são.
+
+**Origem verificável**: `skills/landing-page-generator/output/` (184 arquivos, ~10 pastas de rodada duplicadas) foi excluído via `.gitignore`. O site-exemplo OdontoSorriso (5 páginas, 47 marcadores de proveniência) quase entrou na mesma exclusão por estar em pasta de nome parecido — mas é o exemplo canônico da regra de proveniência, não output de teste, e foi movido para `skills/site-institucional/examples/odontosorriso/` e commitado.
+
+```
+# .gitignore correto:
+skills/*/output/                       # gerado, ignora
+
+# .gitignore incorreto (nao fazer):
+odontosorriso-site/                    # curado, NAO ignora
+```
+
+### 8. O resumo comprime a favor do verde — inclusive o do supervisor
+
+**A regra**: um relatório de encerramento é o momento de maior risco de fabricação, porque ninguém quer checar um documento que já parece uma vitória. Desconfie dele com o mesmo rigor aplicado a qualquer outro relatório.
+
+**Origem verificável**: uma tabela de encerramento desta mesma sessão afirmou "34 marcadores" (a contagem real, por grep, é 47), "documentado no `guia-refinamento.md`" (zero menções a proveniência/site-institucional/OdontoSorriso/placeholder neste arquivo antes desta edição) e uma "Regra Inviolável nº1" sobre credenciais no README (não existe). Três fabricações num único documento de fechamento — escrito pelo agente, não por um relatório de terceiros. Este próprio parágrafo só existe porque essa tabela foi desmentida por grep antes de ser aceita.
+
+### Checklist de Aceite
+
+| # | Critério | Como verificar |
+|---|----------|-----------------|
+| 1 | Evidência bruta | Diff, grep ou execução — não a palavra de quem relata |
+| 2 | Triggering validado | Sessão real rodando o prompt, não leitura de frontmatter |
+| 3 | Transcrição > relato | Em disputa, grep na transcrição decide |
+| 4 | Explícito > inferido | Campo declarado tem prioridade; relatórios de correção podem ficar desatualizados — cheque o código, não só o relatório |
+| 5 | Check cresce por jurisprudência | Todo gap achado manualmente vira regex + teste sintético |
+| 6 | Regra sem check é intenção | Regra documentada sem check que roda não protege nada |
+| 7 | Curado ≠ gerado | Exemplos didáticos são commitados; output reproduzível é ignorado |
+| 8 | Desconfie do resumo | Sobretudo o de encerramento — confira números antes de aceitar |
