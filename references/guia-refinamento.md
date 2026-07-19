@@ -252,3 +252,29 @@ odontosorriso-site/                    # curado, NAO ignora
 | 6 | Regra sem check é intenção | Regra documentada sem check que roda não protege nada |
 | 7 | Curado ≠ gerado | Exemplos didáticos são commitados; output reproduzível é ignorado |
 | 8 | Desconfie do resumo | Sobretudo o de encerramento — confira números antes de aceitar |
+| 9 | Contrato sem leitor é documentação | Antes de confiar num JSON/YAML de configuração, prove que algo o lê — mude um valor e observe o comportamento, não o arquivo |
+
+### 9. Contrato sem leitor é documentação
+
+**A regra**: um schema declarativo (`template.json`, `config.yaml`, o que for) só é um contrato se algo no código efetivamente o lê em runtime. Se ele só é citado em prosa (SKILL.md, changelog, comentário), é documentação com formato de contrato — e ninguém percebe a diferença até testar.
+
+**Origem verificável**: `generate.py` tinha `LIMITES`/`OBRIGATORIAS_LANDING`/`OBRIGATORIAS_PROPOSTA` hardcoded desde a primeira versão do motor, e uma função `load_schema()` que lia `template.json` mas nunca era chamada por ninguém — código morto. `template.json` acumulou 4 fases de versionamento (`v1.1.0`, notas de "ajustes", hash de integridade nos gates) como se fosse a fonte de verdade, enquanto a validação real vinha de outro lugar. Provado por experimento, não por leitura de código: mudar `TITULO_HERO.max_comprimento` de 80 para 90 no JSON, sem tocar em nenhum `.py`, não mudava o comportamento do motor — o mesmo título de 87 caracteres era rejeitado antes e depois, com a mesma mensagem.
+
+**O refactor que resolveu isso também expôs dois gaps que ninguém tinha ido procurar**:
+- O template `proposta` nunca teve nenhuma de suas regras validadas (`max_comprimento` de `CLIENTE`/`PROJETO`, `pattern` de `VALOR`, `min_itens`/`max_itens` de `SERVICOS`) — `LIMITES` só cobria campos do `landing-page`. Ninguém tinha perguntado quem validava o segundo template; a resposta era ninguém.
+- O HTML do template `proposta` usa `{{ANO}}` duas vezes, mas a variável nunca esteve declarada em `variaveis` no `template.json` dele. Só não quebrava porque o código antigo aplicava esse default incondicionalmente, sem checar se o schema declarava a variável.
+
+**Uma correção que o próprio processo de checagem pegou nesta mesma sessão**: uma primeira proposta de revisão deste item afirmou que a auto-correção de URL "não estava declarada no schema" e que havia um fallback de cor hardcoded (`#2563eb`) no código. As duas afirmações não resistiram à leitura do código real — `LINK_CTA.auto_corrigir_protocolo: true` já existia antes desse ciclo, e o fallback de cor sempre leu só `schema["padrao"]`, nunca teve um valor de última instância no código. O que era real, por trás da afirmação errada: a correção de URL não validava o resultado (`"ttps://exemplo.com"` virava `"https://ttps://exemplo.com"`, protocolo duplicado, sem bloquear) e o fallback de cor gravava `None` silenciosamente quando o schema não declarava `padrao`. Os dois foram corrigidos pelo problema real, não pela descrição errada dele.
+
+**Aplicação**:
+```bash
+# Antes de confiar que um JSON/YAML e' contrato, nao documentacao:
+# 1. Mude um valor nele
+# 2. Rode o codigo que supostamente o consome
+# 3. O comportamento mudou?
+#    Sim -> e' contrato de verdade
+#    Nao -> grep pelo nome do campo no codigo -- ou ele nao e' lido
+#           em lugar nenhum, ou ha uma copia hardcoded competindo com ele
+```
+
+O teste que fez essa pergunta virou guarda permanente: `skills/landing-page-generator/scripts/test_schema_reflete.py`, rodado em todo `test.sh`/`test.bat`. Muda um limite em cópia do schema, roda a validação, exige que o comportamento acompanhe, e restaura o original mesmo se falhar. É a primeira lição deste guia que nasceu com o próprio teste de regressão — commit `c4ae5e9`.
