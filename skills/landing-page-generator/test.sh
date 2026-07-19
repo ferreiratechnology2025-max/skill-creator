@@ -21,8 +21,11 @@ mkdir -p "$OUTPUT_DIR"
 
 echo "[1/4] Testing landing-page template..."
 echo "-----------------------------------------------"
-# --test-all separa a saida por template (output/test-suite/<template>/<slug>)
-python "$SCRIPTS_DIR/generate.py" --test-all --output "$OUTPUT_DIR" || true
+# --test-all separa a saida por template (output/test-suite/<template>/<slug>).
+# O exit code de generate.py --test-all so' e' 0 quando real_errors == 0 (ele
+# ja' desconta os casos em EXPECTED_FAILS) -- por isso NAO usamos "|| true"
+# aqui: isso mascararia uma regressao real num caso que deveria passar.
+python "$SCRIPTS_DIR/generate.py" --test-all --output "$OUTPUT_DIR" || FALHAS=$((FALHAS + 1))
 echo ""
 
 echo "[2/4] Testing proposta-comercial template..."

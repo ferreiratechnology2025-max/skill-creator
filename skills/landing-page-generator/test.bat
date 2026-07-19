@@ -20,11 +20,14 @@ mkdir "%OUTPUT_DIR%"
 
 echo [1/4] Testando landing-page (templates/default)...
 echo -----------------------------------------------
-REM --test-all separa a saida por template (output\test-suite\^<template^>\^<slug^>)
+REM --test-all separa a saida por template (output\test-suite\^<template^>\^<slug^>).
+REM O exit code so' e' 0 quando real_errors == 0 (EXPECTED_FAILS ja' descontado)
+REM -- por isso o errorlevel conta como falha real, nao so' aviso.
 python "%SCRIPTS_DIR%\generate.py" --test-all --output "%OUTPUT_DIR%"
 if errorlevel 1 (
     echo.
-    echo [AVISO] Alguns testes de landing-page falharam ^(isso e' esperado para casos de bloqueio^).
+    echo [ERRO] generate.py --test-all reportou erros reais ^(alem dos esperados^).
+    set /a FALHAS+=1
 )
 echo.
 
