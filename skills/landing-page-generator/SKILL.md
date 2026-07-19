@@ -50,7 +50,25 @@ output/<slug>/index.html + params.json
 scripts/check.py      ← QA independente (8 checks)
 ```
 
-O template vive em `assets/templates/{nome}/` e seu contrato de variaveis esta em `template.json` (leia-o antes de montar os parametros).
+O template vive em `assets/templates/{nome}/` e seu contrato de variaveis esta em `template.json` (leia-o antes de montar os parametros). `generate.py` deriva toda a validacao desse arquivo em runtime — nao ha copia hardcoded de limites/obrigatoriedade em codigo (ver `scripts/test_schema_reflete.py`, que prova isso por comportamento).
+
+## 🧙 Wizard Visual (Fase 5)
+
+Interface visual local para preencher os parametros com pre-visualizacao ao vivo, sem editar JSON a mao. Roda um servidor local que reaproveita `generate.py` de verdade (mesmo `validar`/`renderizar`/`gerar` do CLI) — o preview no navegador nunca reimplementa a validacao em JS.
+
+```bash
+python scripts/wizard_server.py --port 8765
+# abrir http://127.0.0.1:8765/ no navegador
+```
+
+O formulario e' construido dinamicamente a partir do `template.json` do template selecionado (`landing-page` ou `proposta`) — trocar um limite no schema muda o formulario e a validacao ao mesmo tempo, sem tocar em `assets/wizard/index.html`. Servidor local apenas (`127.0.0.1`), sem autenticacao — nao e' para expor em rede.
+
+```
+scripts/wizard_server.py   ← http.server stdlib, reaproveita generate.py
+assets/wizard/index.html   ← formulario + iframe de preview, le /api/schema
+```
+
+Endpoints: `GET /api/schema?template=<nome>`, `POST /api/preview`, `POST /api/gerar` (grava em `output/wizard/<template>/<slug>/`, mesmo formato do CLI).
 
 ## 📝 Exemplos de Uso
 

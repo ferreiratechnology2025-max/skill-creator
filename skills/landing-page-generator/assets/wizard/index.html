@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wizard — Landing Page Generator</title>
+<style>
+  :root {
+    --bg:#f5f5f8; --panel:#fff; --border:#e2e2e8; --ink:#16161f; --muted:#6b6b76;
+    --accent:#2563eb; --accent-dark:#1e3a8a; --erro:#dc2626; --aviso:#b45309; --ok:#16a34a;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,"Segoe UI",Roboto,sans-serif; background:var(--bg); color:var(--ink); }
+  header {
+    padding:14px 24px; background:var(--panel); border-bottom:1px solid var(--border);
+    display:flex; align-items:center; gap:16px;
+  }
+  header h1 { font-size:1.05rem; margin:0; font-weight:700; }
+  select {
+    padding:8px 12px; border-radius:8px; border:1px solid var(--border); font-size:.9rem; background:#fff;
+  }
+  main {
+    display:grid; grid-template-columns:420px 1fr; height:calc(100vh - 57px);
+  }
+  #form-pane { overflow-y:auto; padding:20px 22px; border-right:1px solid var(--border); background:var(--panel); }
+  #preview-pane { display:flex; flex-direction:column; min-width:0; }
+  #preview-frame { flex:1; border:0; background:#fff; }
+  .field { margin-bottom:16px; }
+  .field label { display:block; font-weight:600; font-size:.82rem; margin-bottom:5px; }
+  .field .hint { font-size:.74rem; color:var(--muted); margin-top:3px; }
+  .field input[type=text], .field input[type=url], .field textarea {
+    width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:7px;
+    font-size:.88rem; font-family:inherit;
+  }
+  .field textarea { resize:vertical; min-height:64px; }
+  .field input[type=color] { width:52px; height:34px; padding:0; border:1px solid var(--border); border-radius:7px; }
+  .lista-item {
+    border:1px solid var(--border); border-radius:8px; padding:10px 10px 8px; margin-bottom:8px;
+    position:relative; background:#fafafc;
+  }
+  .lista-item input { margin-bottom:6px; }
+  .lista-item input:last-of-type { margin-bottom:0; }
+  .lista-item button.remover {
+    position:absolute; top:6px; right:8px; background:none; border:0; color:var(--erro);
+    cursor:pointer; font-size:.85rem; line-height:1;
+  }
+  .btn {
+    padding:9px 16px; border-radius:8px; border:0; font-weight:700; cursor:pointer; font-size:.85rem;
+  }
+  .btn-secundario { background:var(--border); color:var(--ink); }
+  .btn-primario { background:var(--accent); color:#fff; }
+  .btn-primario:hover { background:var(--accent-dark); }
+  #mensagens { padding:10px 24px; font-size:.82rem; border-bottom:1px solid var(--border); background:var(--panel); }
+  #mensagens p { margin:3px 0; }
+  #mensagens .erro { color:var(--erro); }
+  #mensagens .aviso { color:var(--aviso); }
+  #status-gerar { padding:10px 24px; font-size:.85rem; border-top:1px solid var(--border); background:var(--panel); min-height:20px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🧙 Wizard — landing-page-generator</h1>
+  <select id="template-select" aria-label="Template">
+    <option value="landing-page">landing-page</option>
+    <option value="proposta">proposta</option>
+  </select>
+  <span style="flex:1"></span>
+  <button class="btn btn-primario" id="btn-gerar">Gerar</button>
+</header>
+
+<div id="mensagens"></div>
+
+<main>
+  <div id="form-pane"></div>
+  <div id="preview-pane">
+    <iframe id="preview-frame" title="Pré-visualização"></iframe>
+    <div id="status-gerar"></div>
+  </div>
+</main>
+
+<script>
+// Campos com default dinamico (ano atual, derivado de outro campo) --
+// nao existe o que o usuario digite aqui, o servidor computa via
+// generate.aplicar_defaults(). Ver DEFAULTS_DINAMICOS em generate.py.
+const CAMPOS_OCULTOS = new Set(["ANO", "META_DESCRICAO"]);
+
+let debounceTimer = null;
+
+async function carregarSchema(template) {
+  const resp = await fetch(`/api/schema?template=${encodeURIComponent(template)}`);
+  if (!resp.ok) {
+    const erro = await resp.json().catch(() => ({}));
+    mostrarMensagens([erro.erro || `Erro ${resp.status} ao carregar schema`], []);
+    return;
+  }
+  const schema = await resp.json();
+  montarFormulario(schema);
+  agendarPreview();
+}
+
+function montarFormulario(schema) {
+  const pane = document.getElementById('form-pane');
+  pane.innerHTML = '';
+  const variaveis = schema.variaveis || {};
+  for (const [chave, spec] of Object.entries(variaveis)) {
+    if (CAMPOS_OCULTOS.has(chave)) continue;
+    pane.appendChild(criarCampo(chave, spec));
+  }
+}
+
+function criarCampo(chave, spec) {
+  const wrap = document.createElement('div');
+  wrap.className = 'field';
+
+  const label = document.createElement('label');
+  label.textContent = chave + (spec.obrigatorio ? ' *' : '');
+  wrap.appendChild(label);
+
+  if (spec.tipo === 'lista') {
+    wrap.appendChild(criarCampoLista(spec));
+  } else if (spec.tipo === 'cor') {
+    const input = document.createElement('input');
+    input.type = 'color';
+    input.dataset.chave = chave;
+    input.value = (spec.padrao && /^#[0-9a-fA-F]{6}$/.test(spec.padrao)) ? spec.padrao : '#2563eb';
+    input.addEventListener('input', agendarPreview);
+    wrap.appendChild(input);
+  } else {
+    const grande = (spec.max_comprimento || 0) > 100;
+    const input = document.createElement(grande ? 'textarea' : 'input');
+    if (!grande) input.type = spec.tipo === 'url' ? 'url' : 'text';
+    input.dataset.chave = chave;
+    if (spec.max_comprimento) input.maxLength = spec.max_comprimento;
+    if (spec.exemplo) input.placeholder = String(spec.exemplo);
+    input.addEventListener('input', agendarPreview);
+    wrap.appendChild(input);
+  }
+
+  const partesHint = [];
+  if (spec.min_comprimento) partesHint.push(`min ${spec.min_comprimento}`);
+  if (spec.max_comprimento) partesHint.push(`max ${spec.max_comprimento}`);
+  if (partesHint.length) {
+    const hint = document.createElement('div');
+    hint.className = 'hint';
+    hint.textContent = partesHint.join(' · ');
+    wrap.appendChild(hint);
+  }
+
+  return wrap;
+}
+
+function criarCampoLista(spec) {
+  const container = document.createElement('div');
+  container.dataset.listaCampos = JSON.stringify(spec.campos || null);
+
+  const itens = document.createElement('div');
+  itens.className = 'lista-itens';
+  container.appendChild(itens);
+
+  const minItens = spec.min_itens || 1;
+  for (let i = 0; i < minItens; i++) {
+    itens.appendChild(criarItemLista(spec.campos));
+  }
+
+  const btnAdd = document.createElement('button');
+  btnAdd.type = 'button';
+  btnAdd.className = 'btn btn-secundario';
+  btnAdd.textContent = '+ item';
+  btnAdd.addEventListener('click', () => {
+    itens.appendChild(criarItemLista(spec.campos));
+    agendarPreview();
+  });
+  container.appendChild(btnAdd);
+
+  container.dataset.isLista = 'true';
+  return container;
+}
+
+function criarItemLista(campos) {
+  const item = document.createElement('div');
+  item.className = 'lista-item';
+
+  const btnRemover = document.createElement('button');
+  btnRemover.type = 'button';
+  btnRemover.className = 'remover';
+  btnRemover.textContent = '✕';
+  btnRemover.addEventListener('click', () => {
+    item.remove();
+    agendarPreview();
+  });
+  item.appendChild(btnRemover);
+
+  if (campos) {
+    for (const campo of campos) {
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.placeholder = campo;
+      input.dataset.campoItem = campo;
+      input.addEventListener('input', agendarPreview);
+      item.appendChild(input);
+    }
+  } else {
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.placeholder = 'item';
+    input.dataset.campoItem = '__string__';
+    input.addEventListener('input', agendarPreview);
+    item.appendChild(input);
+  }
+  return item;
+}
+
+function coletarParams() {
+  const params = {};
+  const pane = document.getElementById('form-pane');
+
+  pane.querySelectorAll('.field > [data-chave]').forEach(input => {
+    if (input.value !== '') params[input.dataset.chave] = input.value;
+  });
+
+  pane.querySelectorAll('.field').forEach(campo => {
+    const container = campo.querySelector('[data-lista-campos]');
+    if (!container) return;
+    const label = campo.querySelector('label').textContent.replace(' *', '');
+    const camposDecl = JSON.parse(container.dataset.listaCampos);
+    const valores = [];
+    container.querySelectorAll('.lista-item').forEach(item => {
+      if (camposDecl) {
+        const obj = {};
+        item.querySelectorAll('[data-campo-item]').forEach(inp => {
+          obj[inp.dataset.campoItem] = inp.value;
+        });
+        if (Object.values(obj).some(v => v)) valores.push(obj);
+      } else {
+        const inp = item.querySelector('[data-campo-item]');
+        if (inp && inp.value) valores.push(inp.value);
+      }
+    });
+    params[label] = valores;
+  });
+
+  return params;
+}
+
+function agendarPreview() {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(atualizarPreview, 400);
+}
+
+async function atualizarPreview() {
+  const template = document.getElementById('template-select').value;
+  const params = coletarParams();
+  const resp = await fetch('/api/preview', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ template, params }),
+  });
+  const dados = await resp.json();
+  mostrarMensagens(dados.erros || [], dados.avisos || []);
+  const frame = document.getElementById('preview-frame');
+  if (dados.html) {
+    frame.srcdoc = dados.html;
+  } else {
+    frame.srcdoc = '<p style="font-family:sans-serif;color:#888;padding:20px">Preencha os campos obrigatórios para ver a pré-visualização.</p>';
+  }
+}
+
+function mostrarMensagens(erros, avisos) {
+  const el = document.getElementById('mensagens');
+  el.innerHTML = '';
+  erros.forEach(e => {
+    const p = document.createElement('p');
+    p.className = 'erro';
+    p.textContent = '⚠ ' + e;
+    el.appendChild(p);
+  });
+  avisos.forEach(a => {
+    const p = document.createElement('p');
+    p.className = 'aviso';
+    p.textContent = 'ℹ ' + a;
+    el.appendChild(p);
+  });
+}
+
+document.getElementById('template-select').addEventListener('change', (e) => {
+  carregarSchema(e.target.value);
+});
+
+document.getElementById('btn-gerar').addEventListener('click', async () => {
+  const template = document.getElementById('template-select').value;
+  const params = coletarParams();
+  const statusEl = document.getElementById('status-gerar');
+  statusEl.textContent = 'Gerando...';
+  const resp = await fetch('/api/gerar', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ template, params }),
+  });
+  const dados = await resp.json();
+  if (dados.status === 'sucesso') {
+    statusEl.innerHTML = `<span style="color:var(--ok);font-weight:700">✓ Gerado: ${dados.output_path}</span>`;
+  } else {
+    statusEl.innerHTML = `<span style="color:var(--erro)">✗ ${(dados.erros || []).join('; ')}</span>`;
+  }
+});
+
+carregarSchema('landing-page');
+</script>
+</body>
+</html>

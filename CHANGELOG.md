@@ -5,6 +5,23 @@ Todas as mudanças notáveis deste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
+## [1.5.0] — 2026-07-19
+
+**Fase 5 (`RELATORIO_FASE4.5.md`)**: interface visual + integração com o motor + preview em tempo real, conforme planejado. Consolida também o gate 2 (validação schema-driven) e as correções de harness que antecederam o wizard — nenhuma delas tinha entrada própria no CHANGELOG, só mensagem de commit.
+
+### Adicionado
+- **`scripts/wizard_server.py`**: servidor local (stdlib `http.server`, sem dependências) que reaproveita `generate.py` de verdade — `/api/preview` e `/api/gerar` chamam `validar`/`aplicar_defaults`/`renderizar`/`gerar`, não reimplementam nada em JS. Serve `assets/wizard/` com guarda contra path traversal.
+- **`assets/wizard/index.html`**: formulário construído dinamicamente a partir do `template.json` buscado via `/api/schema` — trocar um limite no schema muda o formulário sem tocar no HTML. Preview ao vivo via iframe, suporta os dois templates (`landing-page`, `proposta`).
+- **`scripts/generate.py: aplicar_defaults()`**: extraída de `gerar()` para ser reaproveitada pelo wizard sem duplicar a lógica de defaults literais/dinâmicos.
+
+### Corrigido (validação schema-driven — gate 2 da Fase 5, ver `guia-refinamento.md` item 9)
+- `generate.py` não tem mais `LIMITES`/`OBRIGATORIAS_LANDING`/`OBRIGATORIAS_PROPOSTA` hardcoded — `validar()` deriva tudo de `template.json`. `load_schema()` existia mas nunca era chamada; agora é o único caminho de leitura de regras.
+- Dois gaps de contrato expostos pelo próprio refactor: template `proposta` nunca teve nenhuma regra validada (só presença de campos), e o `{{ANO}}` usado 2x no HTML da proposta nunca esteve declarado no `template.json` dela.
+- URL: distingue "sem protocolo" (corrige) de "esquema inválido tipo `ttps://`" (bloqueia — corrigir produziria protocolo duplicado). Cor: bloqueia se schema não declarar `padrao`, em vez de gravar `None` silenciosamente.
+- `scripts/test_schema_reflete.py`: teste de regressão permanente, prova por comportamento (muda limite no schema, exige que o motor reflita) — é o próprio experimento que reprovou o motor no gate 2, promovido a guarda.
+- **Estágio `[1/4]` de `test.sh`/`test.bat` mascarava regressão real** com `python generate.py --test-all || true` — uma falha de validação genuína (não um bloqueio esperado do `EXPECTED_FAILS`) passava pelos 4 estágios sem ser contada, harness terminava "All 4 stages passed" com uma regressão real dentro. Corrigido: exit code de `--test-all` agora conta para o resultado final.
+- `--test-all` também misturava saída de `proposta` e `landing-page` no mesmo diretório, fazendo `check.py` (QA específico de landing-page: CTA, LGPD) reprovar um documento que nunca teve esse contrato. Corrigido: saída em lote separada por template (`output/test-suite/<template>/<slug>`).
+
 ## [1.4.0] — 2026-07-19
 
 **Nota sobre versionamento**: o salto de 1.3.0 para 1.4.0 não pula uma versão planejada — 1.3.0 já existia neste CHANGELOG antes desta release, cobrindo trabalho não relacionado (cache/determinismo/batch mode do `generate.py`, ver seção abaixo), commitado no mesmo dia. 1.4.0 é a próxima MINOR livre pelo SemVer, escolhida por esta release adicionar uma skill nova (`site-institucional`), não corrigir a existente.

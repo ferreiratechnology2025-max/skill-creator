@@ -185,6 +185,28 @@ def validar(params, schema):
     return erros, avisos
 
 
+def aplicar_defaults(params, schema):
+    """Aplica defaults declarados no schema em params (in-place).
+
+    Extraida de gerar() para ser reaproveitada por qualquer consumidor
+    que precise do mesmo comportamento sem reimplementa-lo -- ex.
+    wizard_server.py, no endpoint de preview. Ver DEFAULTS_DINAMICOS
+    para por que ANO/META_DESCRICAO nao vem so' de "padrao".
+    """
+    variaveis = schema.get("variaveis", {})
+    for chave, spec in variaveis.items():
+        if chave in DEFAULTS_DINAMICOS:
+            continue
+        padrao = spec.get("padrao")
+        if padrao is not None:
+            params.setdefault(chave, padrao)
+
+    if "ANO" in variaveis:
+        params.setdefault("ANO", date.today().year)
+    if "META_DESCRICAO" in variaveis:
+        params.setdefault("META_DESCRICAO", params.get("SUBTITULO", ""))
+
+
 def renderizar(template, params):
     """Renderiza template substituindo placeholders pelos valores."""
     # 1. Blocos de lista {{#NOME}}...{{/NOME}}
@@ -259,22 +281,7 @@ def gerar(params, template_name="landing-page", out_base=None):
             "output_path": None,
         }
 
-    # Aplicar defaults literais declarados no schema (campo "padrao")
-    variaveis = schema.get("variaveis", {})
-    for chave, spec in variaveis.items():
-        if chave in DEFAULTS_DINAMICOS:
-            continue
-        padrao = spec.get("padrao")
-        if padrao is not None:
-            params.setdefault(chave, padrao)
-
-    # Defaults dinamicos: o schema documenta a intencao em prosa
-    # ("(ano atual)", "(derivado de SUBTITULO)"), o computo mora aqui
-    # porque nao ha como expressar isso como literal em JSON estatico.
-    if "ANO" in variaveis:
-        params.setdefault("ANO", date.today().year)
-    if "META_DESCRICAO" in variaveis:
-        params.setdefault("META_DESCRICAO", params.get("SUBTITULO", ""))
+    aplicar_defaults(params, schema)
 
     # Renderizar
     html = renderizar(template, params)
