@@ -93,6 +93,23 @@ cd skills/landing-page-generator
 python scripts/generate.py params.json
 ```
 
+### Skill: Site Institucional
+
+Para gerar um site multi-página para um negócio local:
+
+```
+cria um site institucional de 5 páginas para a clínica OdontoSorriso
+```
+
+Todo dado factual sem fonte real (telefone, endereço, CRO/CNPJ, preços,
+equipe, contagens) sai marcado com `<!-- PLACEHOLDER fonte: nenhuma -->`
+— nunca formatado como se fosse verificado. Ver o exemplo canônico em
+`skills/site-institucional/examples/odontosorriso/` e rodar o QA:
+
+```bash
+python skills/site-institucional/scripts/check.py caminho/para/pagina.html
+```
+
 ### No Wizard Visual
 
 1. Abra `wizard.html` no navegador
@@ -122,6 +139,7 @@ python scripts/generate.py params.json
 | Skill | Descrição |
 |-------|-----------|
 | 🌐 Landing Page Generator | Gera landing pages de conversão para PMEs |
+| 🏢 Site Institucional | Gera site multi-página (Início, Sobre, Serviços, Equipe, Contato) para negócio local, com regra de proveniência: todo claim factual sem dado real é marcado como placeholder |
 
 ---
 
