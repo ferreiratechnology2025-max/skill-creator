@@ -345,7 +345,11 @@ def main():
             try:
                 params = json.loads(f.read_text(encoding="utf-8"))
                 template = resolve_template(params)
-                result = gerar(params, template, out_base)
+                # Cada template tem sua propria subpasta -- misturar saida
+                # de landing-page e proposta num so out_base faz ferramentas
+                # especificas de um template (ex. check.py, que espera CTA
+                # e rodape LGPD) rodarem contra o contrato errado.
+                result = gerar(params, template, out_base / template)
                 result["input_file"] = f.name
                 result["template_usado"] = template
                 results.append(result)
